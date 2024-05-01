@@ -1,4 +1,4 @@
-<p align="center"><img src="./logo.png" alt="native framework logo"/></p>
+<p align="center"><img width="300px" src="./logo.png" alt="native framework logo"/></p>
 <h1 align="center">native</h1>
 <h3 align="center">Build your macOS app with C++</h3>
 
