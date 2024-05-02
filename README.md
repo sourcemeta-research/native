@@ -4,7 +4,7 @@
 
 Native is a robust C++ framework designed to streamline the development of native applications for C++ developers.
 
-> ✋ Native is currently available for macOS. Support for Windows and Linux is under development and will be coming soon.
+> ✋ Native is currently available for macOS. Support for Windows and GNU/Linux is under development and will be coming soon.
 
 ## ✨ Features
 
@@ -13,6 +13,13 @@ Native is a robust C++ framework designed to streamline the development of nativ
 -  📦 **Packaging Ready**: Includes code signing and notarization.
 -  🧩 **Modular Architecture**: Opt-in modules for tailored functionality.
 
+## Install
+
+### macOS
+
+```
+brew install native
+```
 
 ## Getting Started with Native
 
@@ -31,26 +38,32 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
 1. Code!
    
    ```cc
-   #include "native/ui/text.h"
-   #include "native/ui/containers.h"
-   #include "native/ui/window.h"
-   #include "native/app.h"
+   #include <sourcemeta/native/ui/text.h>
+   #include <sourcemeta/native/ui/containers.h>
+   #include <sourcemeta/native/ui/window.h>
+   #include <sourcemeta/native/app.h>
+
+   using sourcemta::native::ui;
+
+   class App: public sourcemeta::native::Application {
+       auto on_start() -> void {}
+
+       auto on_ready() -> void {
+           Window window{800, 600};
+           Container container{Container::Position::Horizontal};
+           Text text{"Hello, world!"};
+
+           container.add(text);
+           window.add(container);
+           window.show();
+       }
+
+       auto on_error() -> void {}
+   };
 
    int main() {
-       Window window{800, 600};
-       Text text{"Hello, world!"};
-       
-       Container::HStack h_stack{};
-       h_stack.add(&text);
-       h_stack.position(Container::Centered);
-
-       window.add(&h_stack);
-
-       Application app = Application();
-       app.setWindow(&window);
-       app.run();
-
-       return 0;
+       App app{};
+       return app.run();
    }
    ```
 
@@ -58,11 +71,11 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
 
    ```json
    {
-       "main": "main.cc",
+       "sources": ["main.cc"],
        "version": "1.0.0",
        "name": "My application",
        "description": "This is the description of my app.",
-       "modules": ["ui"]
+       "modules": ["ui/*"]
    }
    ```
 
@@ -83,32 +96,42 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
 1. Code!
    
    ```cc
-   #include "native/ui/text.h"
-   #include "native/ui/containers.h"
-   #include "native/ui/window.h"
-   #include "native/app.h"
+   #include <sourcemeta/native/ui/text.h>
+   #include <sourcemeta/native/ui/containers.h>
+   #include <sourcemeta/native/ui/window.h>
+   #include <sourcemeta/native/app.h>
+
+   using sourcemta::native::ui;
+
+   class App: public sourcemeta::native::Application {
+       auto on_start() -> void {}
+
+       auto on_ready() -> void {
+           Window window{800, 600};
+           Container container{Container::Position::Horizontal};
+           Text text{"Hello, world!"};
+
+           container.add(text);
+           window.add(container);
+           window.show();
+       }
+
+       auto on_error() -> void {}
+   };
 
    int main() {
-       Window window{800, 600};
-       Text text{"Hello, world!"};
-       
-       Container::HStack h_stack{};
-       h_stack.add(&text);
-       h_stack.position(Container::Centered);
-
-       window.add(&h_stack);
-
-       Application app = Application();
-       app.setWindow(&window);
-       app.run();
-
-       return 0;
+       App app{};
+       return app.run();
    }
    ```
 
 2. Configure!
 
    ```cmake
+   cmake_minimum_required(VERSION 3.26)
+
+   project(my_native_app LANGUAGES CXX)
+
    find_package(Native VERSION 1.0)
 
    # This macro generates custom CMake targets!!!!
@@ -130,6 +153,10 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
 3. Develop!
 
    ```shell
+   cd build
+
+   cmake .. --config Debug
+
    cmake --build . --config Debug --target native-app-develop
    ```
 
