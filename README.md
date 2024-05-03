@@ -39,43 +39,44 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    
    ```cc
    #include <sourcemeta/native/ui/text.h>
-   #include <sourcemeta/native/ui/containers.h>
+   #include <sourcemeta/native/ui/container.h>
    #include <sourcemeta/native/ui/window.h>
    #include <sourcemeta/native/app.h>
 
    using sourcemta::native::ui;
 
    class App: public sourcemeta::native::Application {
-       auto on_start() -> void {}
+   public:
+       auto on_start() -> void override {}
 
-       auto on_ready() -> void {
-           Window window{800, 600};
+       auto on_ready() -> void override {
            Container container{Container::Position::Horizontal};
            Text text{"Hello, world!"};
 
            container.add(text);
            window.add(container);
+           window.size(800, 600);
            window.show();
        }
 
-       auto on_error() -> void {}
+       auto on_error(const std::exception &) noexcept -> void override {}
+
+   private:
+       Window window;
    };
 
-   int main() {
-       App app{};
-       return app.run();
-   }
+   STARSHIP_RUN(App);
    ```
 
 2. Configure!
 
    ```json
    {
-       "sources": ["main.cc"],
+       "sources": [ "main.cc" ],
        "version": "1.0.0",
        "name": "My application",
        "description": "This is the description of my app.",
-       "modules": ["ui/*"]
+       "modules": [ "ui/text", "ui/container", "ui/window" ]
    }
    ```
 
@@ -97,32 +98,33 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    
    ```cc
    #include <sourcemeta/native/ui/text.h>
-   #include <sourcemeta/native/ui/containers.h>
+   #include <sourcemeta/native/ui/container.h>
    #include <sourcemeta/native/ui/window.h>
    #include <sourcemeta/native/app.h>
 
    using sourcemta::native::ui;
 
    class App: public sourcemeta::native::Application {
-       auto on_start() -> void {}
+   public:
+       auto on_start() -> void override {}
 
-       auto on_ready() -> void {
-           Window window{800, 600};
+       auto on_ready() -> void override {
            Container container{Container::Position::Horizontal};
            Text text{"Hello, world!"};
 
            container.add(text);
            window.add(container);
+           window.size(800, 600);
            window.show();
        }
 
-       auto on_error() -> void {}
+       auto on_error(const std::exception &) noexcept -> void override {}
+
+   private:
+       Window window;
    };
 
-   int main() {
-       App app{};
-       return app.run();
-   }
+   STARSHIP_RUN(App);
    ```
 
 2. Configure!
@@ -134,9 +136,9 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
 
    find_package(Native VERSION 1.0)
 
-   # This macro generates custom CMake targets!!!!
-   # native-app-develop
-   # native-app-package
+   # This macro generates the following CMake targets:
+   # - native-app-develop
+   # - native-app-package
    native_add_app(
      TARGET app
      PLATFORM desktop 
@@ -145,7 +147,7 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    native_set_profile(app NAME "My App")
    native_set_profile(app DESCRIPTION "My first Native app")
    native_set_profile(app VERSION 1.0.0)
-   native_set_profile(app MODULES "ui")
+   native_set_profile(app MODULES "ui/text" "ui/container" "ui/window")
 
    # Then you can link whatever existing tragets to the `app` target. 
    ```
