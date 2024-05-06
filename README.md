@@ -43,29 +43,31 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    #include <sourcemeta/native/ui/window.h>
    #include <sourcemeta/native/app.h>
 
-   using sourcemta::native::ui;
+   using sourcemeta::native::ui;
 
    class App: public sourcemeta::native::Application {
    public:
        auto on_start() -> void override {}
 
        auto on_ready() -> void override {
-           Container container{Container::Position::Horizontal};
-           Text text{"Hello, world!"};
-
+           container.position(Container::Position::Horizontal);
+           text.set("Hello, world!");
            container.add(text);
+
            window.add(container);
            window.size(800, 600);
            window.show();
        }
 
-       auto on_error(const std::exception &) noexcept -> void override {}
+       auto on_error(std::exception_ptr) noexcept -> void override {}
 
    private:
        Window window;
+       Container container;
+       Text text;
    };
 
-   STARSHIP_RUN(App);
+   NATIVE_RUN(App);
    ```
 
 2. Configure!
@@ -102,29 +104,31 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    #include <sourcemeta/native/ui/window.h>
    #include <sourcemeta/native/app.h>
 
-   using sourcemta::native::ui;
+   using sourcemeta::native::ui;
 
    class App: public sourcemeta::native::Application {
    public:
        auto on_start() -> void override {}
 
        auto on_ready() -> void override {
-           Container container{Container::Position::Horizontal};
-           Text text{"Hello, world!"};
-
+           container.position(Container::Position::Horizontal);
+           text.set("Hello, world!");
            container.add(text);
+
            window.add(container);
            window.size(800, 600);
            window.show();
        }
 
-       auto on_error(const std::exception &) noexcept -> void override {}
+       auto on_error(std::exception_ptr) noexcept -> void override {}
 
    private:
        Window window;
+       Container container;
+       Text text;
    };
 
-   STARSHIP_RUN(App);
+   NATIVE_RUN(App);
    ```
 
 2. Configure!
