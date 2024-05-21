@@ -1,0 +1,3 @@
+add_executable(example_hello_world hello_world.cc)
+target_link_libraries(example_hello_world sourcemeta_native_application)
+

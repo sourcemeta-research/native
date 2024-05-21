@@ -1,0 +1,57 @@
+#include <sourcemeta/native/application.h>
+
+#include "delegate.h"
+
+#import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
+
+#include <iostream>
+
+namespace {
+sourcemeta::native::Application *instance_{nullptr};
+}
+
+namespace sourcemeta::native {
+Application::Application() {
+  assert(!instance_);
+  instance_ = this;
+}
+
+Application *Application::instance() {
+  assert(instance_);
+  return instance_;
+}
+
+auto Application::run() noexcept -> int {
+  assert(!running_);
+  running_ = true;
+
+  on_start();
+
+  NSApplication *application = [NSApplication sharedApplication];
+  AppDelegate *delegate = [[AppDelegate alloc] init];
+  internal_ = (__bridge void *)delegate;
+  [application setDelegate:delegate];
+  [application run];
+  return EXIT_SUCCESS;
+}
+
+auto Application::on_error(const std::exception &error) -> void {
+  std::cerr << "Error: " << error.what() << std::endl;
+#ifndef NDEBUG
+  std::abort();
+#else
+  throw error;
+#endif
+}
+
+auto Application::exit(const int code) const noexcept -> void {
+  assert(running_);
+
+  if (code == 0) {
+    [NSApp terminate:nil];
+  }
+
+  std::exit(code);
+}
+} // namespace sourcemeta::native
