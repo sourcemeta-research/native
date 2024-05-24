@@ -3,7 +3,7 @@ CMAKE = cmake
 all: configure build
 
 configure: .always
-	$(CMAKE) -S . -B ./build -G "Xcode"
+	$(CMAKE) -S . -B ./build
 
 build: configure .always
 	$(CMAKE) --build ./build
