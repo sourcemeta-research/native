@@ -12,8 +12,10 @@ using Internal = void *;
 struct ApplicationInternals;
 
 class Application {
-public:
+protected:
   Application();
+
+public:
   virtual ~Application();
 
   // Remove copy semantics
