@@ -14,7 +14,7 @@ struct ApplicationInternals;
 class Application {
 public:
   Application();
-  virtual ~Application() = default;
+  virtual ~Application();
 
   // Remove copy semantics
   Application(Application const &) = delete;

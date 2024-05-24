@@ -17,6 +17,13 @@ Application::Application() {
   instance_ = this;
 }
 
+Application::~Application() {
+  if (internal_) {
+    CFBridgingRelease(internal_);
+  }
+  instance_ = nullptr;
+}
+
 Application *Application::instance() {
   assert(instance_);
   return instance_;
@@ -30,7 +37,7 @@ auto Application::run() noexcept -> int {
 
   NSApplication *application = [NSApplication sharedApplication];
   AppDelegate *delegate = [[AppDelegate alloc] init];
-  internal_ = (__bridge void *)delegate;
+  internal_ = const_cast<void *>(CFBridgingRetain(delegate));
   [application setDelegate:delegate];
   [application run];
   return EXIT_SUCCESS;
