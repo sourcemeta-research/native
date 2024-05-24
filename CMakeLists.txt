@@ -12,7 +12,7 @@ project(native
 )
 
 include(vendor/noa/cmake/noa.cmake)
-include(cmake/compiler.cmake)
+include(vendor/noa/cmake/noa/defaults.cmake)
 
 add_subdirectory(src/application)
 
