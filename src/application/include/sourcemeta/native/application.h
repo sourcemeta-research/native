@@ -35,7 +35,7 @@ public:
 protected:
   virtual auto on_start() -> void = 0;
   virtual auto on_ready() -> void = 0;
-  virtual auto on_error(const std::exception &error) -> void = 0;
+  virtual auto on_error(std::exception_ptr error) -> void = 0;
 
 private:
   Internal internal_;

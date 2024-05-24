@@ -9,7 +9,8 @@
   if (!visibleWindows) {
     try {
       sourcemeta::native::ApplicationInternals::on_ready();
-    } catch (const std::exception &error) {
+    } catch (const std::exception &) {
+      std::exception_ptr error = std::current_exception();
       sourcemeta::native::ApplicationInternals::on_error(error);
     }
   }
@@ -21,7 +22,8 @@
 
   try {
     sourcemeta::native::ApplicationInternals::on_ready();
-  } catch (const std::exception &error) {
+  } catch (const std::exception &) {
+    std::exception_ptr error = std::current_exception();
     sourcemeta::native::ApplicationInternals::on_error(error);
   }
 }
@@ -34,8 +36,7 @@ auto ApplicationInternals::on_ready() -> void {
   sourcemeta::native::Application::instance()->on_ready();
 }
 
-auto ApplicationInternals::on_error(const std::exception &error) noexcept
-    -> void {
+auto ApplicationInternals::on_error(std::exception_ptr error) noexcept -> void {
   sourcemeta::native::Application::instance()->on_error(error);
 }
 } // namespace sourcemeta::native

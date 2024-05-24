@@ -36,8 +36,13 @@ auto Application::run() noexcept -> int {
   return EXIT_SUCCESS;
 }
 
-auto Application::on_error(const std::exception &error) -> void {
-  std::cerr << "Error: " << error.what() << std::endl;
+auto Application::on_error(std::exception_ptr error) -> void {
+  try {
+    if (error)
+      std::rethrow_exception(error);
+  } catch (const std::exception &error) {
+    std::cerr << "Error: " << error.what() << std::endl;
+  }
 #ifndef NDEBUG
   std::abort();
 #else

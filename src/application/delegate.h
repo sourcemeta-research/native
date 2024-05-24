@@ -12,7 +12,7 @@
 namespace sourcemeta::native {
 struct ApplicationInternals {
   static auto on_ready() -> void;
-  static auto on_error(const std::exception &error) noexcept -> void;
+  static auto on_error(std::exception_ptr error) noexcept -> void;
 };
 } // namespace sourcemeta::native
 

@@ -9,7 +9,7 @@ public:
 
   auto on_ready() -> void override { std::cout << "Ready!" << std::endl; }
 
-  auto on_error(const std::exception &) noexcept -> void override {}
+  auto on_error(std::exception_ptr) noexcept -> void override {}
 };
 
 NATIVE_RUN(App)
