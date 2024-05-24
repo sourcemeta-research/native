@@ -3,7 +3,7 @@ CMAKE = cmake
 all: configure build
 
 configure: .always
-	$(CMAKE) -S . -B ./build -G "Xcode" -DCMAKE_BUILD_TYPE=Debug
+	$(CMAKE) -S . -B ./build -G "Xcode"
 
 build: configure .always
 	$(CMAKE) --build ./build
