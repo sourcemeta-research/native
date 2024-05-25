@@ -16,7 +16,7 @@ jobs:
         fetch-depth: 0
 
     - name: Install CMake
-      run: brew install cmake
+      run: brew bundle
 
     - name: Build the Project
       run: make
