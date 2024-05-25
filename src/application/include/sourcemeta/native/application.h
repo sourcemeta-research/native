@@ -9,8 +9,6 @@ namespace sourcemeta::native {
 
 using Internal = void *;
 
-struct ApplicationInternals;
-
 class Application {
 protected:
   Application();
