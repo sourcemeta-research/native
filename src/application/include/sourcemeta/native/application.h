@@ -7,8 +7,6 @@
 
 namespace sourcemeta::native {
 
-using Internal = void *;
-
 class Application {
 protected:
   Application();
@@ -49,7 +47,13 @@ protected:
   virtual auto on_error(std::exception_ptr error) -> void = 0;
 
 private:
+  // Internal types is used to store the platform-specific instance of the
+  // application. Each platform will have its own implementation and will
+  // store the instance in a different way, managing memory and resources.
+  using Internal = void *;
+
   Internal internal_;
+
   bool running_{false};
 
   friend struct ApplicationInternals;
