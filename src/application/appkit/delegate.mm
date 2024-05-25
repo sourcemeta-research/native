@@ -33,10 +33,10 @@
 namespace sourcemeta::native {
 
 auto ApplicationInternals::on_ready() -> void {
-  sourcemeta::native::Application::instance()->on_ready();
+  sourcemeta::native::Application::instance().on_ready();
 }
 
 auto ApplicationInternals::on_error(std::exception_ptr error) noexcept -> void {
-  sourcemeta::native::Application::instance()->on_error(error);
+  sourcemeta::native::Application::instance().on_error(error);
 }
 } // namespace sourcemeta::native

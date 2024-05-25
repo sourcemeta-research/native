@@ -22,7 +22,7 @@ public:
 
   /// The Application class is designed to prevent multiple instances
   /// of the application from being created by using a singleton pattern.
-  static Application *instance();
+  static Application &instance();
 
   /// This method is responsible for starting the application.
   /// It returns the exit code of the application. Instead of calling

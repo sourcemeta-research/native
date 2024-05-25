@@ -24,9 +24,9 @@ Application::~Application() {
   instance_ = nullptr;
 }
 
-Application *Application::instance() {
+Application &Application::instance() {
   assert(instance_);
-  return instance_;
+  return *instance_;
 }
 
 auto Application::run() noexcept -> int {
