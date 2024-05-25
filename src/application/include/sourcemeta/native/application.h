@@ -56,6 +56,10 @@ private:
 
   bool running_{false};
 
+  // ApplicationInternals is a friend struct that is responsible for exposing
+  // all protected methods to the platform-specific implementation. For
+  // instance, the on_start method has to be called by the platform-specific
+  // implementation during the application startup.
   friend struct ApplicationInternals;
 };
 
