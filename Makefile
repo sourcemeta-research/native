@@ -18,6 +18,6 @@ test: build
 	fi
 
 clean:
-	rm -rf ./build
+	$(CMAKE) -E rm -R -f build
 
 .always:
