@@ -171,3 +171,46 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
    ```shell
    cmake --build . --config Debug --target native-app-package
    ```
+
+## Contributing
+
+We welcome contributions to this project! To get started, please follow these steps.
+
+### Prerequisites
+
+Make sure you have the following tools installed:
+
+- [CMake](https://cmake.org/)
+
+### Building the Project
+
+1. **Clone the repository**:
+    ```sh
+    git clone https://github.com/sourcemeta-research/native.git
+    cd native
+    ```
+
+2. **Configure and build the project**:
+    We use a Makefile to handle the build process, which in turn uses CMake. Simply run:
+    ```sh
+    make
+    ```
+
+    This will configure the project, build the necessary files, and run the executable.
+
+3. **Running the Executable**:
+    After building the project, you can run the executable to ensure everything is working as expected:
+    ```sh
+    make test
+    ```
+
+    The `make` command will handle this for you and check the exit status of the executable.
+
+We highly advise you to explore and play with the project inside the `/example` folder.
+
+### Cleaning Up
+
+To clean the build directory, run:
+```sh
+make clean
+```
