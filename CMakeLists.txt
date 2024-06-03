@@ -15,5 +15,6 @@ include(vendor/noa/cmake/noa.cmake)
 include(vendor/noa/cmake/noa/defaults.cmake)
 
 add_subdirectory(src/application)
+add_subdirectory(src/window)
 
 add_subdirectory(example/hello_world)
