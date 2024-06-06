@@ -9,7 +9,7 @@ build: configure .always
 	$(CMAKE) --build ./build
 
 test: build
-	./build/example/hello_world/example_hello_world
+	open ./build/example/hello_world/example_hello_world.app
 
 clean:
 	$(CMAKE) -E rm -R -f build
