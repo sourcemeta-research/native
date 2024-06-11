@@ -8,6 +8,8 @@ function(native_add_app)
         set_target_properties(${NATIVE_TARGET} PROPERTIES
             MACOSX_BUNDLE TRUE # TODO(tony-go): should be only for desktop not cli 
         )
+
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
     endif()
@@ -53,9 +55,7 @@ function(_native_link_module)
     cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
 
     # Link the module to the target
-    if(${NATIVE_MODULE_MODULE} STREQUAL "application")
-        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::application)
-    elseif(${NATIVE_MODULE_MODULE} STREQUAL "window")
+    if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window)
     else()
         message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
