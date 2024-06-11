@@ -40,7 +40,7 @@ function(native_set_profile)
         _native_codesign(TARGET "${NATIVE_PROPERTIES_TARGET}")
     endif()
 
-    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/cmake/Info.plist)
 
     # Iterate over the modules and link them
     foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
@@ -73,7 +73,7 @@ function(_native_codesign)
     endif()
 
     # Check if entitlements file exists
-    set(ENTITLEMENTS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/entitlements.plist")
+    set(ENTITLEMENTS_FILE "${CMAKE_SOURCE_DIR}/cmake/entitlements.plist")
     if(EXISTS ${ENTITLEMENTS_FILE})
         add_custom_command(
             TARGET ${NATIVE_TARGET}
