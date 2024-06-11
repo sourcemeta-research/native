@@ -1,6 +1,7 @@
 function(native_add_app)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
-  
+
+    # TODO(tony-go): Add support for CLI
     if("${NATIVE_PLATFORM}" STREQUAL "desktop")
         add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
 
