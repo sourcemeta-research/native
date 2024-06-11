@@ -18,6 +18,15 @@ jobs:
     - name: Install Dependencies
       run: brew bundle
 
+    - name: Import certificate
+      env:
+        APPLE_DEVELOPER_CERT: ${{ secrets.APPLE_DEVELOPER_CERT }}
+        APPLE_DEVELOPER_CERT_PASSWORD: ${{ secrets. APPLE_DEVELOPER_CERT_PASSWORD }}
+      run: |
+        echo $APPLE_DEVELOPER_CERT | base64 --decode > cert.p12
+        sudo security import cert.p12 -A -k /Library/Keychains/System.keychain -P "$APPLE_DEVELOPER_CERT_PASSWORD"
+        rm cert.p12
+
     - name: Build the Project
       run: make
 
