@@ -1,4 +1,5 @@
 #include <sourcemeta/native/application.h>
+#include <sourcemeta/native/window.h>
 
 #include <exception>
 #include <iostream>
@@ -9,10 +10,15 @@ public:
 
   auto on_ready() -> void override {
     std::cout << "Ready!" << std::endl;
-    this->exit(0);
+
+    window.size(800, 600);
+    window.show();
   }
 
   auto on_error(std::exception_ptr) noexcept -> void override {}
+
+private:
+  sourcemeta::native::Window window;
 };
 
 NATIVE_RUN(App)

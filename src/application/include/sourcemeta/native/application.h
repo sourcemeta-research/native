@@ -3,7 +3,6 @@
 
 #include <cassert>
 #include <exception>
-#include <type_traits>
 
 namespace sourcemeta::native {
 

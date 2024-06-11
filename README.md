@@ -148,10 +148,14 @@ Native can be seamlessly integrated into your projects in two distinct ways, dep
      PLATFORM desktop 
      SOURCES main.cc)
 
-   native_set_profile(app NAME "My App")
-   native_set_profile(app DESCRIPTION "My first Native app")
-   native_set_profile(app VERSION 1.0.0)
-   native_set_profile(app MODULES "ui/text" "ui/container" "ui/window")
+   native_set_profile(
+     TARGET app
+     NAME "My App"
+     GUI_IDENTIFIER "com.native.my_app"
+     VERSION "1.0.0"
+     DESCRIPTION "My app first native app"
+     CODESIGN_IDENTITY "W4MF6H9XZ6"
+     MODULES "ui/window" "ui/container" "ui/text")
 
    # Then you can link whatever existing tragets to the `app` target. 
    ```
