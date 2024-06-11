@@ -54,7 +54,13 @@ Window::~Window() {
 }
 
 auto Window::size(const int width, const int height) -> void {
-  std::cout << "size" << std::endl;
+  NSWindow *window = static_cast<NSWindow *>(internal_);
+  NSRect frame = [window frame];
+
+  frame.size.width = width;
+  frame.size.height = height;
+
+  [window setFrame:frame display:YES animate:YES];
 }
 
 auto Window::show() -> void {

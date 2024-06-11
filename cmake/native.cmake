@@ -9,6 +9,8 @@ function(native_add_app)
         )
 
         target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+
+        # TDOD(tony-go): enable optin for this module
         target_link_libraries(${NATIVE_TARGET} sourcemeta::native::window)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
