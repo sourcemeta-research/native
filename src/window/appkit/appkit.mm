@@ -58,7 +58,7 @@ Window::~Window() {
   }
 }
 
-auto Window::size(const int width, const int height) -> void {
+auto Window::size(const unsigned int width, const unsigned int height) -> void {
   NSWindow *window = static_cast<NSWindow *>(internal_);
   NSRect frame = [window frame];
 

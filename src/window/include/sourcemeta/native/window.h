@@ -7,7 +7,7 @@ public:
   Window();
   ~Window();
 
-  auto size(const int width, const int height) -> void;
+  auto size(const unsigned int width, const unsigned int height) -> void;
   auto show() -> void;
 
 private:
