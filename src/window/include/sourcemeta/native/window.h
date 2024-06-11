@@ -1,8 +1,6 @@
 #ifndef SOURCEMETA_NATIVE_UI_WINDOW_H
 #define SOURCEMETA_NATIVE_UI_WINDOW_H
 
-#include <iostream>
-
 namespace sourcemeta::native {
 class Window {
 public:

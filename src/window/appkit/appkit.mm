@@ -1,7 +1,5 @@
 #include <sourcemeta/native/window.h>
 
-#include <iostream>
-
 #import <AppKit/AppKit.h> // NSWindowController
 
 @interface WindowController : NSWindowController
@@ -10,8 +8,8 @@
 
 @implementation WindowController
 - (id)initWithNewWindow {
-  // How the window should look like
-  // See
+  // The style of the window, which determines different aspects of the
+  // window's appearance and behavior. For more information, see
   // https://developer.apple.com/documentation/appkit/nswindowstylemask?language=objc
   NSWindowStyleMask windowStyleMask =
       NSWindowStyleMaskTitled | NSWindowStyleMaskResizable |
@@ -20,22 +18,25 @@
   NSWindow *window = [[NSWindow alloc]
       initWithContentRect:NSMakeRect(0, 0, 0, 0)
                 styleMask:windowStyleMask
-                  // The window renders all drawing into a display
-                  // buffer and then flushes it to the screen.
+                  // You should use this mode.
+                  // It supports hardware acceleration, Quartz drawing,
+                  // and takes advantage of the GPU when possible.
                   backing:NSBackingStoreBuffered
-                    // The window server defers creating the
-                    // window device until the window is moved
-                    // onscreen.
+                    // When defer is set to YES, the window server postpones the
+                    // creation of the window device (the low-level resources
+                    // for rendering) until the window is moved onscreen. This
+                    // can optimize performance by delaying the allocation of
+                    // graphics resources until they are needed.
                     defer:YES];
 
-  // A value that indicates the visibility of the window's title and title bar
-  // buttons.
+  // By default, we don't want the title to be visible
   [window setTitleVisibility:NSWindowTitleHidden];
-  // The title bar does not draw its background, which allows all
-  // content underneath it to show through
+
+  // By default, we don't want the title bar to be transparent
+  // as we hide the title. It lets the window's content extend to the
+  // top of the window.
   [window setTitlebarAppearsTransparent:YES];
 
-  // Autoresize any sub view
   [window.contentView setAutoresizesSubviews:YES];
 
   return [super initWithWindow:window];
@@ -51,6 +52,10 @@ Window::Window() {
 Window::~Window() {
   NSWindow *window = static_cast<NSWindow *>(internal_);
   [[window windowController] close];
+
+  if (internal_) {
+    CFBridgingRelease(internal_);
+  }
 }
 
 auto Window::size(const int width, const int height) -> void {
