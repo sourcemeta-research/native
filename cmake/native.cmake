@@ -7,11 +7,6 @@ function(native_add_app)
         set_target_properties(${NATIVE_TARGET} PROPERTIES
             MACOSX_BUNDLE TRUE # TODO(tony-go): should be only for desktop not cli 
         )
-
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
-
-        # TDOD(tony-go): enable optin for this module
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::window)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
     endif()
@@ -19,7 +14,7 @@ endfunction()
 
 # Function to set profile properties for the app, including code signing identity
 function(native_set_profile)
-    cmake_parse_arguments(NATIVE_PROPERTIES "" "TARGET;NAME;GUI_IDENTIFIER;VERSION;DESCRIPTION;CODESIGN_IDENTITY" "" ${ARGN})
+    cmake_parse_arguments(NATIVE_PROPERTIES "" "TARGET;NAME;GUI_IDENTIFIER;VERSION;DESCRIPTION;CODESIGN_IDENTITY" "MODULES" ${ARGN})
 
     if (NATIVE_PROPERTIES_NAME)
         set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME ${NATIVE_PROPERTIES_NAME})
@@ -45,6 +40,25 @@ function(native_set_profile)
     endif()
 
     set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist)
+
+    # Iterate over the modules and link them
+    foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
+        _native_link_module(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module})
+    endforeach()
+endfunction()
+
+# Internal function to link a module
+function(_native_link_module)
+    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
+
+    # Link the module to the target
+    if(${NATIVE_MODULE_MODULE} STREQUAL "application")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::application)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "window")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window)
+    else()
+        message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
+    endif()
 endfunction()
 
 # Function to embed code signing into the build process

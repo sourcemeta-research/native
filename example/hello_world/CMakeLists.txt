@@ -19,4 +19,5 @@ native_set_profile(
     VERSION "1.0.0"
     DESCRIPTION "My app ..."
     CODESIGN_IDENTITY "W4MF6H9XZ6"
+    MODULES "application" "window"
 )
