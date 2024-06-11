@@ -9,8 +9,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/native.cmake)
 native_add_app(
     TARGET hello_world_app
     PLATFORM desktop
-    SOURCES hello_world.cc
-)
+    SOURCES hello_world.cc)
 
 native_set_profile(
     TARGET hello_world_app
@@ -19,5 +18,4 @@ native_set_profile(
     VERSION "1.0.0"
     DESCRIPTION "My app ..."
     CODESIGN_IDENTITY "W4MF6H9XZ6"
-    MODULES "application" "window"
-)
+    MODULES "application" "window")
