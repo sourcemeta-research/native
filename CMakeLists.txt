@@ -11,8 +11,16 @@ project(native
   DESCRIPTION "Build your macOS app with C++"
 )
 
+# Load Native CMake module
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include(cmake/native.cmake)
+
+# Load Noa CMake module
 include(vendor/noa/cmake/noa.cmake)
 include(vendor/noa/cmake/noa/defaults.cmake)
+
+# Load install helpers
+include(GNUInstallDirs)
 
 add_subdirectory(src/application)
 add_subdirectory(src/window)
