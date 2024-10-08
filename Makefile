@@ -12,7 +12,7 @@ install: build
 	$(CMAKE) --install ./build --prefix ./build/dist
 
 test: build
-	open ./build/example/hello_world/hello_world_app.app
+	cmake --build build --target hello_world_run
 
 clean:
 	$(CMAKE) -E rm -R -f build

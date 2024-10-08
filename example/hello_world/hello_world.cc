@@ -13,6 +13,8 @@ public:
 
     window.size(800, 600);
     window.show();
+
+    this->exit();
   }
 
   auto on_error(std::exception_ptr) noexcept -> void override {}

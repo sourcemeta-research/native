@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+list(APPEND COMPONENTS
+  "application"
+  "window"
+)
+
+foreach (COMPONENT ${COMPONENTS})
+  include("${CMAKE_CURRENT_LIST_DIR}/sourcemeta_native_${COMPONENT}.cmake")
+endforeach()
+
+check_required_components("@PROJECT_NAME@")
