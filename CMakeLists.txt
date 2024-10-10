@@ -31,7 +31,7 @@ configure_package_config_file(
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
   COMPATIBILITY SameMajorVersion)
-# Install the Native CMake module
+#sysmod Install the Native CMake module
 install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
@@ -52,5 +52,7 @@ install(FILES
 add_subdirectory(src/application)
 
 add_subdirectory(src/ui/window)
+
+add_subdirectory(src/sysmod)
 
 add_subdirectory(example)
