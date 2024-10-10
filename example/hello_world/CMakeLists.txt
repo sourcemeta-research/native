@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.14)
 
 project(my_hello_world)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 find_package(Native REQUIRED)
 
 native_add_app(

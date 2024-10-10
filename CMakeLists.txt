@@ -34,6 +34,12 @@ include(CMakePackageConfigHelpers)
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
     COMPONENT sourcemeta_native_application 
     COMPONENT sourcemeta_native_window)
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/native.cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/entitlements.plist"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Info.plist"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  COMPONENT sourcemeta_native)
 
 add_subdirectory(src/application)
 add_subdirectory(src/window)

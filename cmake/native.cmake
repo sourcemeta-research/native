@@ -17,6 +17,11 @@ endfunction()
 
 # Function to set profile properties for the app, including code signing identity
 function(native_set_profile)
+    set(INFO_PLIST_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/Info.plist")
+    if(NOT EXISTS "${INFO_PLIST_PATH}")
+        message(FATAL_ERROR "Info.plist file not found: ${INFO_PLIST_PATH}")
+    endif()
+    
     cmake_parse_arguments(NATIVE_PROPERTIES "" "TARGET;NAME;IDENTIFIER;VERSION;DESCRIPTION;CODESIGN_IDENTITY" "MODULES" ${ARGN})
 
     if (NATIVE_PROPERTIES_NAME)
@@ -42,7 +47,7 @@ function(native_set_profile)
         _native_codesign(TARGET "${NATIVE_PROPERTIES_TARGET}")
     endif()
 
-    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/cmake/Info.plist)
+    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST_PATH})
 
     # Iterate over the modules and link them
     foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
@@ -71,21 +76,20 @@ function(_native_codesign)
     if(NOT CODESIGN_IDENTITY)
         message(FATAL_ERROR "You must specify a code sign identity")
     endif()
-
-    # Check if entitlements file exists
-    set(ENTITLEMENTS_FILE "${CMAKE_SOURCE_DIR}/cmake/entitlements.plist")
-    if(EXISTS ${ENTITLEMENTS_FILE})
-        add_custom_command(
-            TARGET ${NATIVE_TARGET}
-            POST_BUILD
-            COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_FILE} --sign ${CODESIGN_IDENTITY} $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
-        )
-        add_custom_command(
-            TARGET ${NATIVE_TARGET}
-            POST_BUILD
-            COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
-        )
-    else()
-      message(ERROR "Entitlements file not found: ${ENTITLEMENTS_FILE}")
+    
+    set(ENTITLEMENTS_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/entitlements.plist")
+    if(NOT EXISTS "${ENTITLEMENTS_PATH}")
+        message(FATAL_ERROR "Entitlements file not found: ${ENTITLEMENTS_PATH}")
     endif()
+
+    add_custom_command(
+        TARGET ${NATIVE_TARGET}
+        POST_BUILD
+        COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_PATH} --sign ${CODESIGN_IDENTITY} $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
+    )
+    add_custom_command(
+        TARGET ${NATIVE_TARGET}
+        POST_BUILD
+        COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
+        )
 endfunction()
