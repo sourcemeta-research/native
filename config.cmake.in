@@ -3,6 +3,7 @@
 list(APPEND COMPONENTS
   "application"
   "window"
+  "args"
 )
 
 # Include the native.cmake file

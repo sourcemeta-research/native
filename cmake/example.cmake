@@ -1,4 +1,13 @@
-function(add_example EXAMPLE_NAME)
+function(add_example)
+    cmake_parse_arguments(EXAMPLE ""
+      "NAME;TYPE" "" ${ARGN})
+
+    if(NOT EXAMPLE_NAME)
+        message(FATAL_ERROR "Missing required argument: NAME")
+    elseif(NOT EXAMPLE_TYPE)
+        message(FATAL_ERROR "Missing required argument: TYPE")
+    endif()
+ 
     set(EXAMPLE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${EXAMPLE_NAME}")
     set(EXAMPLE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}")
     set(EXAMPLE_APP_NAME "${EXAMPLE_NAME}_app")
@@ -24,9 +33,16 @@ function(add_example EXAMPLE_NAME)
     add_dependencies(${EXAMPLE_NAME}_build ${EXAMPLE_NAME}_configure)
 
     # Run target
-    add_custom_target(${EXAMPLE_NAME}_run
-        COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}.app/Contents/MacOS/${EXAMPLE_APP_NAME}"
-        COMMENT "Running ${EXAMPLE_NAME} example"
-    )
+    if(EXAMPLE_TYPE STREQUAL "desktop")
+        add_custom_target(${EXAMPLE_NAME}_run
+            COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}.app/Contents/MacOS/${EXAMPLE_APP_NAME}"
+            COMMENT "Running ${EXAMPLE_NAME} example (bundle)"
+        )
+    else()
+        add_custom_target(${EXAMPLE_NAME}_run
+            COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}"
+            COMMENT "Running ${EXAMPLE_NAME} example"
+        )
+    endif()
     add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)
 endfunction()

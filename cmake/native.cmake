@@ -1,14 +1,14 @@
 function(native_add_app)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
 
-    # TODO(tony-go): Add support for CLI
     if("${NATIVE_PLATFORM}" STREQUAL "desktop")
         add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-
         set_target_properties(${NATIVE_TARGET} PROPERTIES
-            MACOSX_BUNDLE TRUE # TODO(tony-go): should be only for desktop not cli 
+            MACOSX_BUNDLE TRUE
         )
-
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+    elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
+        add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
         target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
@@ -21,7 +21,7 @@ function(native_set_profile)
     if(NOT EXISTS "${INFO_PLIST_PATH}")
         message(FATAL_ERROR "Info.plist file not found: ${INFO_PLIST_PATH}")
     endif()
-    
+
     cmake_parse_arguments(NATIVE_PROPERTIES "" "TARGET;NAME;IDENTIFIER;VERSION;DESCRIPTION;CODESIGN_IDENTITY" "MODULES" ${ARGN})
 
     if (NATIVE_PROPERTIES_NAME)
@@ -62,6 +62,8 @@ function(_native_link_module)
     # Link the module to the target
     if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "sysmod/args")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::args)
     else()
         message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
     endif()
@@ -82,14 +84,28 @@ function(_native_codesign)
         message(FATAL_ERROR "Entitlements file not found: ${ENTITLEMENTS_PATH}")
     endif()
 
+    get_target_property(TARGET_TYPE ${NATIVE_TARGET} TYPE)
+    if(TARGET_TYPE STREQUAL "EXECUTABLE")
+        get_target_property(IS_BUNDLE ${NATIVE_TARGET} MACOSX_BUNDLE)
+    else()
+        set(IS_BUNDLE FALSE)
+    endif()
+    message(STAUS "IS_BUNDLE: ${IS_BUNDLE}")
+
+    if(IS_BUNDLE)
+        set(TARGET_PATH $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>)
+    else()
+        set(TARGET_PATH $<TARGET_FILE:${NATIVE_TARGET}>)
+    endif()
+
     add_custom_command(
         TARGET ${NATIVE_TARGET}
         POST_BUILD
-        COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_PATH} --sign ${CODESIGN_IDENTITY} $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
+        COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_PATH} --sign ${CODESIGN_IDENTITY} ${TARGET_PATH}
     )
     add_custom_command(
         TARGET ${NATIVE_TARGET}
         POST_BUILD
-        COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>
-        )
+        COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures ${TARGET_PATH}
+    )
 endfunction()

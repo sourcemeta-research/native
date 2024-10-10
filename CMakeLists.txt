@@ -53,4 +53,6 @@ add_subdirectory(src/application)
 
 add_subdirectory(src/ui/window)
 
+add_subdirectory(src/sysmod)
+
 add_subdirectory(example)
