@@ -10,7 +10,7 @@ find_package(Native REQUIRED)
 
 native_add_app(
     TARGET cli_app
-    PLATFORM desktop
+    PLATFORM cli
     SOURCES cli.cc)
 
 native_set_profile(
