@@ -106,6 +106,6 @@ function(_native_codesign)
     add_custom_command(
         TARGET ${NATIVE_TARGET}
         POST_BUILD
-COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures ${TARGET_PATH}
-        )
+        COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures ${TARGET_PATH}
+    )
 endfunction()
