@@ -50,6 +50,7 @@ install(FILES
   COMPONENT sourcemeta_native)
 
 add_subdirectory(src/application)
-add_subdirectory(src/window)
+
+add_subdirectory(src/ui/window)
 
 add_subdirectory(example)
