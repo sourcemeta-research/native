@@ -1,4 +1,29 @@
 function(native_add_app)
+  if(APPLE)
+    _native_add_app_apple(${ARGN})
+  else()
+    message(FATAL_ERROR "We only support Apple platforms")
+  endif()
+endfunction()
+
+# Function to set profile properties for the app, including code signing identity
+function(native_set_profile)
+    if(APPLE)
+        _native_set_profile_apple(${ARGN})
+    else()
+        message(FATAL_ERROR "We only support Apple platforms")
+    endif()
+endfunction()
+
+#
+#
+#
+# Apple platform private functions
+#
+#
+#
+
+function(_native_add_app_apple)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
 
     if("${NATIVE_PLATFORM}" STREQUAL "desktop")
@@ -15,8 +40,7 @@ function(native_add_app)
     endif()
 endfunction()
 
-# Function to set profile properties for the app, including code signing identity
-function(native_set_profile)
+function(_native_set_profile_apple)
     set(INFO_PLIST_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/Info.plist")
     if(NOT EXISTS "${INFO_PLIST_PATH}")
         message(FATAL_ERROR "Info.plist file not found: ${INFO_PLIST_PATH}")
@@ -44,33 +68,18 @@ function(native_set_profile)
 
     if (NATIVE_PROPERTIES_CODESIGN_IDENTITY)
         set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES CODESIGN_IDENTITY ${NATIVE_PROPERTIES_CODESIGN_IDENTITY})
-        _native_codesign(TARGET "${NATIVE_PROPERTIES_TARGET}")
+        _native_codesign_apple(TARGET "${NATIVE_PROPERTIES_TARGET}")
     endif()
 
     set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST_PATH})
 
     # Iterate over the modules and link them
     foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
-        _native_link_module(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module})
+        _native_link_modules_apple(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module})
     endforeach()
 endfunction()
 
-# Internal function to link a module
-function(_native_link_module)
-    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
-
-    # Link the module to the target
-    if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
-        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::appkit)
-    elseif(${NATIVE_MODULE_MODULE} STREQUAL "sysmod/args")
-        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::args::foundation)
-    else()
-        message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
-    endif()
-endfunction()
-
-# Function to embed code signing into the build process
-function(_native_codesign)
+function(_native_codesign_apple)
     cmake_parse_arguments(NATIVE ""
       "TARGET" "" ${ARGN})
 
@@ -116,4 +125,17 @@ function(_native_codesign)
         POST_BUILD
         COMMAND /usr/bin/codesign --verify -R='anchor trusted' --verbose --strict=all --all-architectures ${TARGET_PATH}
     )
+endfunction()
+
+function(_native_link_modules_apple)
+    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
+
+    # Link the module to the target
+    if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::appkit)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "sysmod/args")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::args::foundation)
+    else()
+        message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
+    endif()
 endfunction()
