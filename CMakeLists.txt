@@ -36,8 +36,7 @@ install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-  COMPONENT sourcemeta_native_application
-  COMPONENT sourcemeta_native_window)
+  COMPONENT sourcemeta_native)
 
 
 install(FILES

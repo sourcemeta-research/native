@@ -1,7 +1,8 @@
 @PACKAGE_INIT@
 
 list(APPEND COMPONENTS
-  "application"
+  "application_appkit"
+  "application_foundation"
   "window"
   "args"
 )

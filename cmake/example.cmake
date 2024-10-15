@@ -20,7 +20,6 @@ function(add_example)
         "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
         "-DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}/build/dist"
         "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}"
-        "-DCODESIGN_IDENTITY:STRING=${CODESIGN_IDENTITY}"
         COMMENT "Configuring ${EXAMPLE_NAME} example"
     )
 
@@ -40,8 +39,8 @@ function(add_example)
         )
     else()
         add_custom_target(${EXAMPLE_NAME}_run
-            COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}"
-            COMMENT "Running ${EXAMPLE_NAME} example"
+            COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}" --foo bar
+            COMMENT "Running ${EXAMPLE_NAME} example (executable)"
         )
     endif()
     add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)

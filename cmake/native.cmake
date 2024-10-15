@@ -6,10 +6,10 @@ function(native_add_app)
         set_target_properties(${NATIVE_TARGET} PROPERTIES
             MACOSX_BUNDLE TRUE
         )
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::appkit)
     elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
         add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::foundation)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
     endif()
@@ -98,11 +98,19 @@ function(_native_codesign)
         set(TARGET_PATH $<TARGET_FILE:${NATIVE_TARGET}>)
     endif()
 
-    add_custom_command(
-        TARGET ${NATIVE_TARGET}
-        POST_BUILD
-        COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_PATH} --sign ${CODESIGN_IDENTITY} ${TARGET_PATH}
-    )
+    if(IS_BUNDLE)
+        add_custom_command(
+            TARGET ${NATIVE_TARGET}
+            POST_BUILD
+            COMMAND /usr/bin/codesign --deep --force --verbose --timestamp --options=runtime --entitlements ${ENTITLEMENTS_PATH} --sign ${CODESIGN_IDENTITY} ${TARGET_PATH}
+        )
+    else()
+        add_custom_command(
+            TARGET ${NATIVE_TARGET}
+            POST_BUILD
+            COMMAND /usr/bin/codesign --force --verbose --timestamp --options=runtime --sign ${CODESIGN_IDENTITY} ${TARGET_PATH}
+        )
+    endif()
     add_custom_command(
         TARGET ${NATIVE_TARGET}
         POST_BUILD
