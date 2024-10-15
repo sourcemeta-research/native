@@ -3,9 +3,8 @@
 list(APPEND COMPONENTS
   "application_appkit"
   "application_foundation"
-  "window"
-  "args"
-)
+  "window_appkit"
+  "args_foundation")
 
 # Include the native.cmake file
 include("${CMAKE_CURRENT_LIST_DIR}/native.cmake")
