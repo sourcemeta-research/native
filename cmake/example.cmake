@@ -20,7 +20,6 @@ function(add_example)
         "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
         "-DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}/build/dist"
         "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}"
-        "-DCODESIGN_IDENTITY:STRING=${CODESIGN_IDENTITY}"
         COMMENT "Configuring ${EXAMPLE_NAME} example"
     )
 

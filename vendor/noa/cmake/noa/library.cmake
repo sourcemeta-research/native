@@ -1,6 +1,6 @@
 function(noa_library)
   cmake_parse_arguments(NOA_LIBRARY ""
-    "NAMESPACE;PROJECT;NAME;FOLDER" "PRIVATE_HEADERS;SOURCES" ${ARGN})
+    "NAMESPACE;PROJECT;NAME;FOLDER;CHILD" "PRIVATE_HEADERS;SOURCES" ${ARGN})
 
   if(NOT NOA_LIBRARY_PROJECT)
     message(FATAL_ERROR "You must pass the project name using the PROJECT option")
@@ -18,7 +18,11 @@ function(noa_library)
     set(INCLUDE_PREFIX "include/${NOA_LIBRARY_PROJECT}")
   endif()
 
-  set(PUBLIC_HEADER "${INCLUDE_PREFIX}/${NOA_LIBRARY_NAME}.h")
+  if(NOT NOA_LIBRARY_CHILD)
+    set(PUBLIC_HEADER "${INCLUDE_PREFIX}/${NOA_LIBRARY_NAME}.h")
+  else()
+    set(PUBLIC_HEADER "../${INCLUDE_PREFIX}/${NOA_LIBRARY_CHILD}.h")
+  endif()
 
   if(NOA_LIBRARY_SOURCES)
     set(ABSOLUTE_PRIVATE_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${NOA_LIBRARY_NAME}_export.h")
@@ -48,8 +52,13 @@ function(noa_library)
   add_library(${ALIAS_NAME} ALIAS ${TARGET_NAME})
 
   if(NOA_LIBRARY_SOURCES)
+    if(NOT NOA_LIBRARY_CHILD)
+      set(includeDir "${CMAKE_CURRENT_SOURCE_DIR}/include")
+    else()
+      set(includeDir "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+    endif()
     target_include_directories(${TARGET_NAME} PUBLIC
-      "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+      "$<BUILD_INTERFACE:${includeDir}>"
       "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
   else()
     target_include_directories(${TARGET_NAME} INTERFACE

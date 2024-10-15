@@ -6,10 +6,10 @@ function(native_add_app)
         set_target_properties(${NATIVE_TARGET} PROPERTIES
             MACOSX_BUNDLE TRUE
         )
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application_appkit)
     elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
         add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application)
+        target_link_libraries(${NATIVE_TARGET} sourcemeta_native_application_foundation)
     else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
     endif()
