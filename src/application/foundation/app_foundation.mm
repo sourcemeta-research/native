@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#import <Foundation/Foundation.h> // NSObject
+
 namespace {
 sourcemeta::native::Application *instance_{nullptr};
 }
