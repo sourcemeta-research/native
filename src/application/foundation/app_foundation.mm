@@ -31,6 +31,7 @@ auto Application::run() noexcept -> int {
   running_ = true;
 
   on_start();
+  on_ready();
 
   return EXIT_SUCCESS;
 }
