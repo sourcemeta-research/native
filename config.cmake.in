@@ -4,7 +4,7 @@ list(APPEND COMPONENTS
   "application_appkit"
   "application_foundation"
   "window"
-  "args"
+  "args_foundation"
 )
 
 # Include the native.cmake file
