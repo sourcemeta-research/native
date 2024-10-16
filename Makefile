@@ -18,4 +18,5 @@ test: build
 clean:
 	$(CMAKE) -E rm -R -f build
 
+# For NMake, which doesn't support .PHONY
 .always:
