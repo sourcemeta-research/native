@@ -1,69 +1,92 @@
 #include <sourcemeta/native/application.h>
 
-#include <windows.h>
+#include "delegate_win32.h"
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+#include <cassert>
+#include <iostream>
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine, int nCmdShow) {
-  const char CLASS_NAME[] = "NativeApplication";
+namespace {
+sourcemeta::native::Application *instance_{nullptr};
+}
+
+namespace sourcemeta::native {
+
+Application::Application() {
+  assert(!instance_);
+  instance_ = this;
+}
+
+Application::~Application() {
+  if (internal_) {
+    DestroyWindow(static_cast<HWND>(internal_));
+  }
+  instance_ = nullptr;
+}
+
+Application &Application::instance() {
+  assert(instance_);
+  return *instance_;
+}
+
+auto Application::run() noexcept -> int {
+  assert(!running_);
+  running_ = true;
+
+  on_start();
+
+  const char CLASS_NAME[] = "NativeWin32ApplicationClass";
 
   WNDCLASS wc = {};
-  wc.lpfnWndProc = WindowProc;
-  wc.hInstance = hInstance;
+  wc.lpfnWndProc = AppDelegate::WindowProc;
+  wc.hInstance = GetModuleHandle(NULL);
   wc.lpszClassName = CLASS_NAME;
 
-  RegisterClass(&wc);
-
-  // Create the window
-  HWND hwnd =
-      CreateWindowEx(0,                   // Optional window styles
-                     CLASS_NAME,          // Window class
-                     "Your App Title",    // Window text
-                     WS_OVERLAPPEDWINDOW, // Window style
-
-                     // Size and position
-                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
-                     NULL,      // Parent window
-                     NULL,      // Menu
-                     hInstance, // Instance handle
-                     NULL       // Additional application data
-      );
-
-  if (hwnd == NULL) {
-    return 0;
+  if (!RegisterClass(&wc)) {
+    on_error(std::make_exception_ptr(
+        std::runtime_error("Failed to register window class")));
+    return EXIT_FAILURE;
   }
 
-  ShowWindow(hwnd, nCmdShow);
+  HWND hwnd =
+      CreateWindowEx(0, CLASS_NAME, "Win32 Application", WS_OVERLAPPEDWINDOW,
+                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                     NULL, NULL, GetModuleHandle(NULL), NULL);
 
-  // Run the message loop
+  if (hwnd == NULL) {
+    on_error(
+        std::make_exception_ptr(std::runtime_error("Failed to create window")));
+    return EXIT_FAILURE;
+  }
+
+  internal_ = hwnd;
+  ShowWindow(hwnd, SW_SHOW);
+
   MSG msg = {};
   while (GetMessage(&msg, NULL, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
 
-  return 0;
+  return static_cast<int>(msg.wParam);
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
-                            LPARAM lParam) {
-  switch (uMsg) {
-  case WM_DESTROY:
-    PostQuitMessage(0);
-    return 0;
-
-  case WM_PAINT: {
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hwnd, &ps);
-
-    // All painting occurs here, between BeginPaint and EndPaint.
-    FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
-
-    EndPaint(hwnd, &ps);
+auto Application::on_error(std::exception_ptr error) -> void {
+  try {
+    if (error)
+      std::rethrow_exception(error);
+  } catch (const std::exception &error) {
+    std::cerr << "Error: " << error.what() << std::endl;
   }
-    return 0;
-  }
-  return DefWindowProc(hwnd, uMsg, wParam, lParam);
+#ifndef NDEBUG
+  std::abort();
+#else
+  throw error;
+#endif
 }
+
+auto Application::exit(const int code) const noexcept -> void {
+  assert(running_);
+  PostQuitMessage(code);
+}
+
+} // namespace sourcemeta::native
