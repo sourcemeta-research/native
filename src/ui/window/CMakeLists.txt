@@ -1,1 +1,3 @@
-add_subdirectory(appkit)
+if(APPLE)
+  add_subdirectory(appkit)
+endif()
