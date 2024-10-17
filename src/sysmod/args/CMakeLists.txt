@@ -1,1 +1,3 @@
-add_subdirectory(foundation)
+if(APPLE)
+  add_subdirectory(foundation)
+endif()

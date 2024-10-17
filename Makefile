@@ -1,19 +1,22 @@
 CMAKE = cmake
+PRESET = Debug
 
 all: configure build install
 
 configure: .always
-	$(CMAKE) -DCMAKE_INSTALL_PREFIX=./build/dist -S . -B ./build
+	$(CMAKE) -S . -B ./build \
+		-DCMAKE_BUILD_TYPE:STRING=$(PRESET) \
+		-DCMAKE_INSTALL_PREFIX=./build/dist
 
 build: configure .always
-	$(CMAKE) --build ./build
+	$(CMAKE) --build ./build --config $(PRESET)
 
 install: build
-	$(CMAKE) --install ./build --prefix ./build/dist
+	$(CMAKE) --install ./build --prefix ./build/dist --config $(PRESET)
 
 test: build
-	cmake --build build --target hello_world_run
-	cmake --build build --target cli_run
+	cmake --build build --target hello_world_run --config $(PRESET)
+	# cmake --build build --target cli_run --config $(PRESET)
 
 clean:
 	$(CMAKE) -E rm -R -f build
