@@ -40,5 +40,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Build the Project
-      run: nmake
+    - name: Set up Developer Command Prompt (required for using nmake)
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Build with NMAKE
+      run: |
+        nmake
+      shell: cmd
