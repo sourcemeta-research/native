@@ -12,4 +12,7 @@ noa_library_install(
   NAME application
   VARIANT win32)
 
-target_link_libraries(sourcemeta_native_application_win32 PRIVATE user32 gdi32)
+  target_link_libraries(sourcemeta_native_application_win32 PRIVATE
+    user32
+    gdi32
+  )

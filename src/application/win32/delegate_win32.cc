@@ -1,3 +1,5 @@
+#include <Windows.h>
+
 #include <sourcemeta/native/application.h>
 
 #include "delegate_win32.h"

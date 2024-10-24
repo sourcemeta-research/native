@@ -5,11 +5,14 @@ if(APPLE)
   list(APPEND NATIVE_LANGUAGES OBJC OBJCXX)
 endif()
 
+
 project(native 
   VERSION 0.0.1 
   LANGUAGES ${NATIVE_LANGUAGES}
   DESCRIPTION "Build your macOS app with C++"
 )
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Load Native CMake module
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")

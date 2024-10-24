@@ -1,6 +1,6 @@
 #include <sourcemeta/native/application.h>
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // Temporary until window module is available for windows
 #include <sourcemeta/native/window.h>
 #endif
 
@@ -14,7 +14,7 @@ public:
   auto on_ready() -> void override {
     std::cout << "Ready!" << std::endl;
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // Temporary
     window.size(800, 600);
     window.show();
 #endif
@@ -24,7 +24,7 @@ public:
 
   auto on_error(std::exception_ptr) noexcept -> void override {}
 
-#ifdef __APPLE__
+#ifdef __APPLE__ // Temporary
 private:
   sourcemeta::native::Window window;
 #endif

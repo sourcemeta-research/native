@@ -154,10 +154,7 @@ endfunction()
 function(_native_add_app_win32)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
 
-  add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-
-  set_target_properties(${NATIVE_TARGET} PROPERTIES
-    WIN32_EXECUTABLE TRUE)
+  add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
 
   target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::win32)
 endfunction()

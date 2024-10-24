@@ -1,8 +1,11 @@
+#include <Windows.h>
+
 #include <sourcemeta/native/application.h>
 
 #include "delegate_win32.h"
 
 #include <cassert>
+#include <exception>
 #include <iostream>
 
 namespace {
@@ -18,7 +21,7 @@ Application::Application() {
 
 Application::~Application() {
   if (internal_) {
-    DestroyWindow(static_cast<HWND>(internal_));
+    // DestroyWindow(static_cast<HWND>(internal_));
   }
   instance_ = nullptr;
 }

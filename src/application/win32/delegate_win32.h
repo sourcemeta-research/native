@@ -1,8 +1,8 @@
 #ifndef SOURCEMETA_NATIVE_APPLICATION_WIN32_DELEGATE_H
 #define SOURCEMETA_NATIVE_APPLICATION_WIN32_DELEGATE_H
 
+#include <Windows.h>
 #include <exception>
-#include <windows.h>
 
 namespace sourcemeta::native {
 
