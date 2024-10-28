@@ -45,6 +45,8 @@ install(FILES
   # Install macOS skeleton files
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/entitlements.plist"
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Info.plist"
+  #  install Windows skeleton files
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/resource.rc.in"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
