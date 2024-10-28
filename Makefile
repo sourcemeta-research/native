@@ -15,8 +15,7 @@ install: build
 	$(CMAKE) --install ./build --prefix ./build/dist --config $(PRESET)
 
 test: build
-	cmake --build build --target hello_world_build --config $(PRESET)
-	# cmake --build build --target cli_run --config $(PRESET)
+	$(CMAKE) --build build --target hello_world_run --config $(PRESET)
 
 clean:
 	$(CMAKE) -E rm -R -f build
