@@ -1,10 +1,15 @@
 @PACKAGE_INIT@
 
+if (APPLE)
 list(APPEND COMPONENTS
   "application_appkit"
   "application_foundation"
   "window_appkit"
   "args_foundation")
+elseif (WIN32)
+list(APPEND COMPONENTS
+  "application_win32")
+endif()
 
 # Include the native.cmake file
 include("${CMAKE_CURRENT_LIST_DIR}/native.cmake")

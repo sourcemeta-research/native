@@ -4,7 +4,7 @@ noa_library(
   NAME application
   VARIANT win32
   FOLDER "Native/Application"
-  SOURCES app_win32.cc)
+  SOURCES app_win32.cc delegate_win32.h delegate_win32.cc)
 
 noa_library_install(
   NAMESPACE sourcemeta
@@ -12,4 +12,7 @@ noa_library_install(
   NAME application
   VARIANT win32)
 
-target_link_libraries(sourcemeta_native_application_win32 PRIVATE user32 gdi32)
+  target_link_libraries(sourcemeta_native_application_win32 PRIVATE
+    user32
+    gdi32
+  )

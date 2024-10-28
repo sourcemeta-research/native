@@ -1,6 +1,8 @@
 function(native_add_app)
   if(APPLE)
     _native_add_app_apple(${ARGN})
+  elseif(WIN32)
+    _native_add_app_win32(${ARGN})
   else()
     message(FATAL_ERROR "We only support Apple platforms")
   endif()
@@ -138,4 +140,21 @@ function(_native_link_modules_apple)
     else()
         message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
     endif()
+endfunction()
+
+
+#
+#
+#
+# Windows platform private functions
+#
+#
+#
+
+function(_native_add_app_win32)
+  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
+
+  add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
+
+  target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::win32)
 endfunction()
