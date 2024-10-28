@@ -3,6 +3,7 @@ noa_library(
   PROJECT native
   NAME application
   VARIANT appkit
+  PRIVATE_HEADERS entry.h
   FOLDER "Native/Application"
   SOURCES app_appkit.mm delegate.mm delegate.h)
 
