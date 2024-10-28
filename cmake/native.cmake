@@ -4,7 +4,7 @@ function(native_add_app)
   elseif(WIN32)
     _native_add_app_win32(${ARGN})
   else()
-    message(FATAL_ERROR "We only support Apple platforms")
+    message(FATAL_ERROR "We only support Apple and Win32 platforms")
   endif()
 endfunction()
 
@@ -12,8 +12,10 @@ endfunction()
 function(native_set_profile)
     if(APPLE)
         _native_set_profile_apple(${ARGN})
+    elseif(WIN32)
+        _native_set_profile_win32(${ARGN})
     else()
-        message(FATAL_ERROR "We only support Apple platforms")
+        message(FATAL_ERROR "We only support Apple and Win32 platforms")
     endif()
 endfunction()
 
@@ -101,7 +103,6 @@ function(_native_codesign_apple)
     else()
         set(IS_BUNDLE FALSE)
     endif()
-    message(STAUS "IS_BUNDLE: ${IS_BUNDLE}")
 
     if(IS_BUNDLE)
         set(TARGET_PATH $<TARGET_BUNDLE_DIR:${NATIVE_TARGET}>)
@@ -157,4 +158,26 @@ function(_native_add_app_win32)
   add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
 
   target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::win32)
+endfunction()
+
+function(_native_set_profile_win32)
+    set(RESOURCE_RC_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/resource.rc.in")
+    if(NOT EXISTS "${RESOURCE_RC_PATH}")
+        message(FATAL_ERROR "Resource.rc file not found: ${RESOURCE_RC_PATH}")
+    endif()
+
+    cmake_parse_arguments(NATIVE_PROPERTIES ""
+        "TARGET;NAME;IDENTIFIER;DESCRIPTION;VERSION"
+        "MODULES" ${ARGN})
+
+    # TODO(tonygo): check that the .rc file is filled out properly
+    configure_file(
+        "${RESOURCE_RC_PATH}"
+        "${CMAKE_CURRENT_BINARY_DIR}/resource.rc"
+        @ONLY
+    )
+
+    target_sources(${NATIVE_PROPERTIES_TARGET} PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/resource.rc"
+    )
 endfunction()

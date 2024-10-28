@@ -5,14 +5,11 @@ if(APPLE)
   list(APPEND NATIVE_LANGUAGES OBJC OBJCXX)
 endif()
 
-
 project(native 
   VERSION 0.0.1 
   LANGUAGES ${NATIVE_LANGUAGES}
   DESCRIPTION "Build your macOS app with C++"
 )
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Load Native CMake module
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -42,13 +39,14 @@ install(FILES
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
-
 install(FILES
   # Install native functions like (native_add_app, native_set_profile)
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/native.cmake"
   # Install macOS skeleton files
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/entitlements.plist"
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Info.plist"
+  #  install Windows skeleton files
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/resource.rc.in"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
