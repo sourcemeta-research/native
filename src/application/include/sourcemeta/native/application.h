@@ -74,7 +74,7 @@ private:
       static_assert(std::is_base_of_v<sourcemeta::native::Application, class>, \
                     "You must pass a subclass of Application"); \
       return (class{}).run(); \
-  } }
+  }
 #else
 #define NATIVE_RUN(class)                                                      \
   int main(const int, char *[]) {                                              \
