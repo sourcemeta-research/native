@@ -4,6 +4,7 @@ noa_library(
   NAME application
   VARIANT win32
   FOLDER "Native/Application"
+  PRIVATE_HEADERS entry.h
   SOURCES app_win32.cc delegate_win32.h delegate_win32.cc)
 
 noa_library_install(

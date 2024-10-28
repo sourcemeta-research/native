@@ -4,6 +4,7 @@ noa_library(
   PROJECT native
   NAME application
   VARIANT foundation
+  PRIVATE_HEADERS entry.h
   FOLDER "Native/Application"
   SOURCES app_foundation.mm)
 
