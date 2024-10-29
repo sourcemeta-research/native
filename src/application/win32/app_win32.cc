@@ -35,7 +35,14 @@ auto Application::run() noexcept -> int {
   assert(!running_);
   running_ = true;
 
-  on_start();
+  try {
+    this->on_start();
+    // It seems that win32 doesn't have a ready message
+    // which is app-wide, events are correlated to the window
+    this->on_ready();
+  } catch (...) {
+    this->on_error(std::current_exception());
+  }
 
   const char CLASS_NAME[] = "NativeWin32ApplicationClass";
 

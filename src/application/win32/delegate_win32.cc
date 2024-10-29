@@ -10,11 +10,6 @@ LRESULT CALLBACK AppDelegate::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                                          LPARAM lParam) {
   switch (uMsg) {
   case WM_CREATE:
-    // try {
-    ApplicationInternals::on_ready();
-    // } catch (...) {
-    //   ApplicationInternals::on_error(std::current_exception());
-    // }
     return 0;
   case WM_DESTROY:
     PostQuitMessage(0);
