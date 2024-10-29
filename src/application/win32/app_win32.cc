@@ -2,8 +2,6 @@
 
 #include <sourcemeta/native/application.h>
 
-#include "delegate_win32.h"
-
 #include <cassert>
 #include <exception>
 #include <iostream>
@@ -19,12 +17,7 @@ Application::Application() {
   instance_ = this;
 }
 
-Application::~Application() {
-  if (internal_) {
-    // DestroyWindow(static_cast<HWND>(internal_));
-  }
-  instance_ = nullptr;
-}
+Application::~Application() { instance_ = nullptr; }
 
 Application &Application::instance() {
   assert(instance_);
@@ -43,33 +36,6 @@ auto Application::run() noexcept -> int {
   } catch (...) {
     this->on_error(std::current_exception());
   }
-
-  const char CLASS_NAME[] = "NativeWin32ApplicationClass";
-
-  WNDCLASS wc = {};
-  wc.lpfnWndProc = AppDelegate::WindowProc;
-  wc.hInstance = GetModuleHandle(NULL);
-  wc.lpszClassName = CLASS_NAME;
-
-  if (!RegisterClass(&wc)) {
-    on_error(std::make_exception_ptr(
-        std::runtime_error("Failed to register window class")));
-    return EXIT_FAILURE;
-  }
-
-  HWND hwnd =
-      CreateWindowEx(0, CLASS_NAME, "Win32 Application", WS_OVERLAPPEDWINDOW,
-                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                     NULL, NULL, GetModuleHandle(NULL), NULL);
-
-  if (hwnd == NULL) {
-    on_error(
-        std::make_exception_ptr(std::runtime_error("Failed to create window")));
-    return EXIT_FAILURE;
-  }
-
-  internal_ = hwnd;
-  ShowWindow(hwnd, SW_SHOW);
 
   MSG msg = {};
   while (GetMessage(&msg, NULL, 0, 0)) {

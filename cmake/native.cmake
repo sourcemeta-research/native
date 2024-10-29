@@ -153,7 +153,7 @@ endfunction()
 #
 
 function(_native_add_app_win32)
-  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
+  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES;MODULES" ${ARGN})
 
   add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
 
@@ -180,4 +180,20 @@ function(_native_set_profile_win32)
     target_sources(${NATIVE_PROPERTIES_TARGET} PRIVATE
         "${CMAKE_CURRENT_BINARY_DIR}/resource.rc"
     )
+
+    # Iterate over the modules and link them
+    foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
+        _native_link_modules_win32(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module})
+    endforeach()
+endfunction()
+
+function(_native_link_modules_win32)
+    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
+
+    # Link the module to the target
+    if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::win32)
+    else()
+        message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
+    endif()
 endfunction()
