@@ -1,4 +1,3 @@
-// window_win32.cc
 #include <Windows.h>
 #include <sourcemeta/native/window.h>
 
@@ -14,14 +13,12 @@ Window::Window() : internal_(nullptr) {
   RegisterClass(&wc);
 
   // TODO(tony): add parameter for title
-  HWND hwnd = CreateWindowEx(
-      0, CLASS_NAME, "Window Title", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-      CW_USEDEFAULT, // Position
-      CW_USEDEFAULT,
-      CW_USEDEFAULT, // Size (will be updated if size() was called)
-      NULL,          // Parent window
-      NULL,          // Menu
-      GetModuleHandle(NULL), NULL);
+  HWND hwnd =
+      CreateWindowEx(0, CLASS_NAME, "Window Title", WS_OVERLAPPEDWINDOW,
+                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                     NULL, // Parent window
+                     NULL, // Menu
+                     GetModuleHandle(NULL), NULL);
 
   internal_ = hwnd;
 }

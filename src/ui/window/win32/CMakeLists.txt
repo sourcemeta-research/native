@@ -1,4 +1,3 @@
-
 noa_library(
   NAMESPACE sourcemeta
   PROJECT native
