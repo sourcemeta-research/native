@@ -4,7 +4,7 @@ noa_library(
   NAME window
   VARIANT appkit
   FOLDER "Native/Ui/Window"
-  SOURCES appkit.mm)
+  SOURCES window_appkit.mm)
 
 noa_library_install(
   NAMESPACE sourcemeta
