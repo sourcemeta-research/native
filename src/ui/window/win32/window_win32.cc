@@ -13,6 +13,7 @@ Window::Window() : internal_(nullptr) {
   wc.lpszClassName = CLASS_NAME;
   RegisterClass(&wc);
 
+  // TODO(tony): add parameter for title
   HWND hwnd = CreateWindowEx(
       0, CLASS_NAME, "Window Title", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
       CW_USEDEFAULT, // Position
@@ -32,13 +33,8 @@ Window::~Window() {
 }
 
 auto Window::size(const unsigned int width, const unsigned int height) -> void {
-  if (internal_) {
-    SetWindowPos(static_cast<HWND>(internal_), NULL, 0, 0, // Ignore position
-                 width, height, SWP_NOMOVE | SWP_NOZORDER);
-  } else {
-    // Store dimensions for when window is created
-    // We might want to add member variables for this
-  }
+  SetWindowPos(static_cast<HWND>(internal_), NULL, 0, 0, // Ignore position
+               width, height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 auto Window::show() -> void {
