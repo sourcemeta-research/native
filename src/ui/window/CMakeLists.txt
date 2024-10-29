@@ -1,3 +1,5 @@
 if(APPLE)
   add_subdirectory(appkit)
+elseif(WIN32)
+  add_subdirectory(win32)
 endif()

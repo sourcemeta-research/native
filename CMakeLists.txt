@@ -39,6 +39,7 @@ install(FILES
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
+# TODO(tonygo): hide this in a native macro
 install(FILES
   # Install native functions like (native_add_app, native_set_profile)
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/native.cmake"
