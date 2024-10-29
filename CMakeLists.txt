@@ -39,15 +39,15 @@ install(FILES
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
-# TODO(tonygo): hide this in a native macro
+install(DIRECTORY
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/resources/macos/"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/resources/win32/"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  COMPONENT sourcemeta_native)
+
+# Install native functions like (native_add_app, native_set_profile)
 install(FILES
-  # Install native functions like (native_add_app, native_set_profile)
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/native.cmake"
-  # Install macOS skeleton files
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/entitlements.plist"
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Info.plist"
-  #  install Windows skeleton files
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/resource.rc.in"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
   COMPONENT sourcemeta_native)
 
