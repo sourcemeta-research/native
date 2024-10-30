@@ -47,3 +47,8 @@ jobs:
       run: |
         nmake
       shell: cmd
+
+    - name: Test
+      run: |
+        nmake test
+      shell: cmd
