@@ -1,4 +1,6 @@
 function(native_add_app)
+  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "" ${ARGN})
+
   if(APPLE)
     _native_add_app_apple(${ARGN})
   elseif(WIN32)
@@ -6,6 +8,10 @@ function(native_add_app)
   else()
     message(FATAL_ERROR "We only support Apple and Win32 platforms")
   endif()
+
+  string(TOUPPER "${NATIVE_PLATFORM}" NATIVE_PLATFORM_UPPER)
+  target_compile_definitions(${NATIVE_TARGET} PRIVATE
+    "NATIVE_${NATIVE_PLATFORM_UPPER}=1")
 endfunction()
 
 # Function to set profile properties for the app, including code signing identity
@@ -30,18 +36,17 @@ endfunction()
 function(_native_add_app_apple)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES" ${ARGN})
 
-    if("${NATIVE_PLATFORM}" STREQUAL "desktop")
-        add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-        set_target_properties(${NATIVE_TARGET} PROPERTIES
-            MACOSX_BUNDLE TRUE
-        )
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::appkit)
-    elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
-        add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
-        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::foundation)
-    else()
+  if("${NATIVE_PLATFORM}" STREQUAL "desktop")
+      add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
+      set_target_properties(${NATIVE_TARGET} PROPERTIES
+          MACOSX_BUNDLE TRUE)
+      target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::appkit)
+  elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
+      add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
+      target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::foundation)
+  else()
       message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
-    endif()
+  endif()
 endfunction()
 
 function(_native_set_profile_apple)
@@ -155,9 +160,15 @@ endfunction()
 function(_native_add_app_win32)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "SOURCES;MODULES" ${ARGN})
 
-  add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
-
-  target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::win32)
+    if("${NATIVE_PLATFORM}" STREQUAL "desktop")
+        add_executable(${NATIVE_TARGET} WIN32 ${NATIVE_SOURCES})
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::win32)
+    elseif ("${NATIVE_PLATFORM}" STREQUAL "cli")
+        add_executable(${NATIVE_TARGET} ${NATIVE_SOURCES})
+        target_link_libraries(${NATIVE_TARGET} sourcemeta::native::application::console)
+    else()
+      message(FATAL_ERROR "Unsupported platform: ${NATIVE_PLATFORM}")
+    endif()
 endfunction()
 
 function(_native_set_profile_win32)

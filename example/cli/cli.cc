@@ -1,5 +1,8 @@
 #include <sourcemeta/native/application.h>
+
+#ifdef APPLE
 #include <sourcemeta/native/args.h>
+#endif
 
 #include <exception>
 #include <iostream>
@@ -10,10 +13,13 @@ public:
 
   auto on_ready() -> void override {
     std::cout << "Arguments:" << std::endl;
+
+#ifdef APPLE
     const auto &args = sourcemeta::native::sysmod::args::args();
     for (const auto &arg : args) {
       std::cout << arg << std::endl;
     }
+#endif
 
     this->exit();
   }
