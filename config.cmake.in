@@ -9,6 +9,7 @@ list(APPEND COMPONENTS
 elseif (WIN32)
 list(APPEND COMPONENTS
   "application_win32"
+  "application_console"
   "window_win32")
 endif()
 
