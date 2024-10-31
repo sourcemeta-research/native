@@ -10,7 +10,8 @@ elseif (WIN32)
 list(APPEND COMPONENTS
   "application_win32"
   "application_console"
-  "window_win32")
+  "window_win32"
+  "webview_win32")
 endif()
 
 # Include the native.cmake file
