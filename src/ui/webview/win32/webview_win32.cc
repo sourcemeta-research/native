@@ -70,17 +70,6 @@ auto WebView::attachToWindow(void *windowHandle) -> void {
                       RECT bounds;
                       GetClientRect(internal->parentHwnd, &bounds);
                       internal->controller->put_Bounds(bounds);
-
-                      internal->controller->add_ZoomFactorChanged(
-                          Callback<ICoreWebView2ZoomFactorChangedEventHandler>(
-                              [](ICoreWebView2Controller *sender,
-                                 IUnknown *args) -> HRESULT {
-                                sender->put_ZoomFactor(1.0);
-                                return S_OK;
-                              })
-                              .Get(),
-                          nullptr);
-
                       internal->webview->Navigate(L"https://www.google.com");
                       return S_OK;
                     })
