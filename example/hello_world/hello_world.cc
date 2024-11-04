@@ -18,7 +18,7 @@ public:
     window.show();
 
 #ifdef _WIN32
-    webview.attachToWindow(window.handle());
+    webview.attachToWindow(window);
     // webview.loadUrl("https://www.google.com");
 #endif
 

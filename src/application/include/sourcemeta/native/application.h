@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <exception>
+#include <vector>
 
 namespace sourcemeta::native {
 

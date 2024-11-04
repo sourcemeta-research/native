@@ -20,3 +20,6 @@ set_target_properties(sourcemeta_native_webview_win32 PROPERTIES
 set(WEBVIEW2_ROOT "$ENV{USERPROFILE}/.nuget/packages/microsoft.web.webview2/1.0.2592.51")
 target_link_libraries(sourcemeta_native_webview_win32 PRIVATE
     "${WEBVIEW2_ROOT}/build/native/arm64/WebView2LoaderStatic.lib")
+
+target_link_libraries(sourcemeta_native_webview_win32 PRIVATE
+    sourcemeta::native::window::win32)
