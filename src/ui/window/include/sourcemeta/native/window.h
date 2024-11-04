@@ -9,6 +9,7 @@ public:
 
   auto size(const unsigned int width, const unsigned int height) -> void;
   auto show() -> void;
+  auto handle() -> void *;
 
 private:
   using Internal = void *;

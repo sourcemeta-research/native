@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <wrl.h>
 
+#include <iostream>
+
 using namespace Microsoft::WRL;
 
 namespace sourcemeta::native {
@@ -15,8 +17,20 @@ struct WebViewInternal {
 
 WebView::WebView() : internal_(new WebViewInternal{}) {}
 
-WebView::~WebView() { delete static_cast<WebViewInternal *>(internal_); }
-
+WebView::~WebView() {
+  auto internal = static_cast<WebViewInternal *>(internal_);
+  if (internal->controller) {
+    std::cout << "Releasing controller" << std::endl;
+    internal->controller.Reset(); // Explicitly release
+  }
+  if (internal->webview) {
+    std::cout << "Releasing webview" << std::endl;
+    internal->webview.Reset(); // Explicitly release
+  }
+  std::cout << "Deleting internal" << std::endl;
+  delete internal;
+  std::cout << "WebView destroyed" << std::endl;
+}
 // auto WebView::loadUrl(const std::string &url) -> void {
 //   auto internal = static_cast<WebViewInternal *>(internal_);
 //   if (internal->webview) {
@@ -50,6 +64,24 @@ auto WebView::attachToWindow(void *windowHandle) -> void {
                       internal->controller = controller;
                       internal->controller->get_CoreWebView2(
                           &internal->webview);
+
+                      // Set the bounds of the WebView to match the bounds of
+                      // the parent window
+                      RECT bounds;
+                      GetClientRect(internal->parentHwnd, &bounds);
+                      internal->controller->put_Bounds(bounds);
+
+                      internal->controller->add_ZoomFactorChanged(
+                          Callback<ICoreWebView2ZoomFactorChangedEventHandler>(
+                              [](ICoreWebView2Controller *sender,
+                                 IUnknown *args) -> HRESULT {
+                                sender->put_ZoomFactor(1.0);
+                                return S_OK;
+                              })
+                              .Get(),
+                          nullptr);
+
+                      internal->webview->Navigate(L"https://www.google.com");
                       return S_OK;
                     })
                     .Get());

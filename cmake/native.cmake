@@ -204,6 +204,8 @@ function(_native_link_modules_win32)
     # Link the module to the target
     if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::win32)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "ui/webview")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::webview::win32)
     else()
         message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
     endif()

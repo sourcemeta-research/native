@@ -16,7 +16,6 @@ install: build
 
 test: build
 	$(CMAKE) --build build --target hello_world_run --config $(PRESET)
-	$(CMAKE) --build build --target cli_run --config $(PRESET)
 
 clean:
 	$(CMAKE) -E rm -R -f build

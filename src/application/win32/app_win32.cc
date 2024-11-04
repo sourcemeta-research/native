@@ -38,7 +38,13 @@ auto Application::run() noexcept -> int {
   }
 
   MSG msg = {};
-  while (GetMessage(&msg, NULL, 0, 0)) {
+  BOOL ret = 0;
+  while ((ret = GetMessage(&msg, NULL, 0, 0) != 0)) {
+    if (ret == -1) {
+      // The error is coming from GetMessage().
+      throw std::runtime_error(
+          "Failed to retrieve message from the message queue");
+    }
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
