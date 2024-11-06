@@ -1,8 +1,10 @@
 #include <sourcemeta/native/application.h>
-#ifdef _WIN32
-#include <sourcemeta/native/webview.h>
-#endif
 #include <sourcemeta/native/window.h>
+#ifdef _WIN32
+#include <chrono>
+#include <sourcemeta/native/webview.h>
+#include <thread>
+#endif
 
 #include <exception>
 #include <iostream>
@@ -19,10 +21,10 @@ public:
 
 #ifdef _WIN32
     webview.attachToWindow(window);
-    // webview.loadUrl("https://www.google.com");
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 #endif
 
-    // this->exit();
+    this->exit();
   }
 
   auto on_error(std::exception_ptr) noexcept -> void override {}

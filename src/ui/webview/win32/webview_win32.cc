@@ -20,14 +20,19 @@ WebView::WebView() : internal_(new WebViewInternal{}) {}
 
 WebView::~WebView() {
   auto internal = static_cast<WebViewInternal *>(internal_);
-  if (internal->controller) {
+  std::cout << "WebView::~WebView()" << std::endl;
+  if (internal->controller.Get()) {
+    std::cout << "WebView::~WebView() controller" << std::endl;
     internal->controller.Reset(); // Explicitly release
   }
-  if (internal->webview) {
+  if (internal->webview.Get()) {
+    std::cout << "WebView::~WebView() webview" << std::endl;
     internal->webview.Reset(); // Explicitly release
   }
+  std::cout << "WebView::~WebView() delete internal" << std::endl;
   delete internal;
 }
+
 // auto WebView::loadUrl(const std::string &url) -> void {
 //   auto internal = static_cast<WebViewInternal *>(internal_);
 //   if (internal->webview) {
@@ -65,8 +70,8 @@ auto WebView::attachToWindow(sourcemeta::native::Window &window) -> void {
                       internal->controller->get_CoreWebView2(
                           &internal->webview);
 
-                      // Set the bounds of the WebView to match the bounds of
-                      // the parent window
+                      // Set the bounds of the WebView to match the bounds
+                      // of the parent window
                       RECT bounds;
                       GetClientRect(internal->parentHwnd, &bounds);
                       internal->controller->put_Bounds(bounds);

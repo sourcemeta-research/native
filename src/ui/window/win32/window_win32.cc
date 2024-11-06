@@ -58,8 +58,11 @@ Window::Window() : internal_(new WindowInternal{}) {
 Window::~Window() {
   if (internal_) {
     auto internal = static_cast<WindowInternal *>(internal_);
-    if (internal->hwnd)
+    if (internal->hwnd) {
+      std::cout << "Destroying window" << std::endl;
       DestroyWindow(internal->hwnd);
+      std::cout << "Window destroyed" << std::endl;
+    }
     delete internal;
   }
 }
