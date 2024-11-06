@@ -1,9 +1,7 @@
 #include <sourcemeta/native/application.h>
 #include <sourcemeta/native/window.h>
 #ifdef _WIN32
-#include <chrono>
 #include <sourcemeta/native/webview.h>
-#include <thread>
 #endif
 
 #include <exception>
@@ -21,7 +19,6 @@ public:
 
 #ifdef _WIN32
     webview.attachToWindow(window);
-    std::this_thread::sleep_for(std::chrono::seconds(2));
 #endif
 
     this->exit();

@@ -14,9 +14,13 @@ build: configure .always
 install: build
 	$(CMAKE) --install ./build --prefix ./build/dist --config $(PRESET)
 
-test: build
-	$(CMAKE) --build build --target hello_world_run --config $(PRESET)
+test-cli: build
 	$(CMAKE) --build build --target cli_run --config $(PRESET)
+
+test-hello-world: build
+	$(CMAKE) --build build --target hello_world_run --config $(PRESET)
+
+test: test-cli test-hello-world
 
 clean:
 	$(CMAKE) -E rm -R -f build

@@ -14,32 +14,33 @@ struct WebViewInternal {
   HWND parentHwnd;
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
+  bool ready{false};
 };
 
 WebView::WebView() : internal_(new WebViewInternal{}) {}
 
 WebView::~WebView() {
-  auto internal = static_cast<WebViewInternal *>(internal_);
-  std::cout << "WebView::~WebView()" << std::endl;
-  if (internal->controller.Get()) {
-    std::cout << "WebView::~WebView() controller" << std::endl;
-    internal->controller.Reset(); // Explicitly release
-  }
-  if (internal->webview.Get()) {
-    std::cout << "WebView::~WebView() webview" << std::endl;
-    internal->webview.Reset(); // Explicitly release
-  }
-  std::cout << "WebView::~WebView() delete internal" << std::endl;
-  delete internal;
-}
+  if (internal_) {
+    auto internal = static_cast<WebViewInternal *>(internal_);
 
-// auto WebView::loadUrl(const std::string &url) -> void {
-//   auto internal = static_cast<WebViewInternal *>(internal_);
-//   if (internal->webview) {
-//     std::wstring wurl(url.begin(), url.end());
-//     internal->webview->Navigate(wurl.c_str());
-//   }
-// }
+    if (internal->ready) {
+      std::cout << "WebView::~WebView(): cleaning up WebView" << std::endl;
+
+      // Close and release WebView resources
+      if (internal->controller) {
+        internal->controller->Close();
+        internal->controller = nullptr;
+      }
+      if (internal->webview) {
+        internal->webview = nullptr;
+      }
+    }
+
+    // Delete internal state
+    delete internal;
+    internal_ = nullptr;
+  }
+}
 
 auto WebView::resize() -> void {
   auto internal = static_cast<WebViewInternal *>(internal_);
@@ -76,6 +77,7 @@ auto WebView::attachToWindow(sourcemeta::native::Window &window) -> void {
                       GetClientRect(internal->parentHwnd, &bounds);
                       internal->controller->put_Bounds(bounds);
                       internal->webview->Navigate(L"https://www.google.com");
+                      internal->ready = true;
                       return S_OK;
                     })
                     .Get());
