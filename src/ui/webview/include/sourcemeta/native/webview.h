@@ -1,6 +1,8 @@
 #ifndef SOURCEMETA_NATIVE_UI_WEBVIEW_H
 #define SOURCEMETA_NATIVE_UI_WEBVIEW_H
 
+#include <sourcemeta/native/window.h>
+
 #include <string>
 
 namespace sourcemeta::native {
@@ -15,7 +17,7 @@ public:
   void operator=(WebView const &) = delete;
 
   // Core functionality
-  auto attachToWindow(void *windowHandle) -> void;
+  auto attachToWindow(sourcemeta::native::Window &window) -> void;
   auto loadUrl(const std::string &url) -> void;
   // auto loadHtml(const std::string& html) -> void;
 
@@ -25,7 +27,7 @@ public:
   // std::string&)) -> void;
 
   // Size control
-  auto resize(unsigned int width, unsigned int height) -> void;
+  auto resize() -> void;
   // auto hide() -> void;
 
 private:

@@ -50,5 +50,5 @@ jobs:
 
     - name: Test
       run: |
-        nmake test
+        nmake test-cli
       shell: cmd

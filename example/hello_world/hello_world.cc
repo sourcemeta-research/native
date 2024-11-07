@@ -1,5 +1,8 @@
 #include <sourcemeta/native/application.h>
 #include <sourcemeta/native/window.h>
+#ifdef _WIN32
+#include <sourcemeta/native/webview.h>
+#endif
 
 #include <exception>
 #include <iostream>
@@ -11,8 +14,12 @@ public:
   auto on_ready() -> void override {
     std::cout << "Ready!" << std::endl;
 
-    window.size(800, 600);
+    window.size(1200, 900);
     window.show();
+
+#ifdef _WIN32
+    webview.attachToWindow(window);
+#endif
 
     this->exit();
   }
@@ -21,6 +28,9 @@ public:
 
 private:
   sourcemeta::native::Window window;
+#ifdef _WIN32
+  sourcemeta::native::WebView webview;
+#endif
 };
 
 NATIVE_RUN(App)
