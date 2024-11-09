@@ -15,10 +15,17 @@ public:
 
   auto on_resize(std::function<void(void)> callback) -> void;
 
+  template <typename T> auto add(T &child) -> void { add_(child); }
+
 private:
   using Internal = void *;
-
   Internal internal_;
+
+  template <typename T> void add_(T &child) {
+    if constexpr (requires { child.attachToWindow(*this); }) {
+      child.attachToWindow(*this);
+    }
+  }
 };
 } // namespace sourcemeta::native
 

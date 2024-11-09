@@ -18,7 +18,7 @@ public:
     window.show();
 
 #ifdef _WIN32
-    webview.attachToWindow(window);
+    window.add(webview);
 #endif
 
     this->exit();
