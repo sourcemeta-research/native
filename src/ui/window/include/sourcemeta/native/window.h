@@ -24,9 +24,6 @@ private:
   template <typename T> void add_(T &child) {
     if constexpr (requires { child.attachToWindow(*this); }) {
       child.attachToWindow(*this);
-    } else {
-      static_assert(false, "Window::add() only accepts objects with "
-                           "attachToWindow(Window&) method");
     }
   }
 };
