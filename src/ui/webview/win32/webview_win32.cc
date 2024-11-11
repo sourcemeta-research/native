@@ -1,20 +1,25 @@
 #include <WebView2.h>
+
 #include <sourcemeta/native/webview.h>
 #include <sourcemeta/native/window.h>
+
 #include <windows.h>
 #include <wrl.h>
 
 #include <iostream>
+#include <optional>
+#include <string>
 
 using namespace Microsoft::WRL;
 
 namespace sourcemeta::native {
 
 struct WebViewInternal {
+  bool ready{false};
+  std::optional<std::string> url;
   HWND parentHwnd;
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
-  bool ready{false};
 };
 
 WebView::WebView() : internal_(new WebViewInternal{}) {}
@@ -76,13 +81,29 @@ auto WebView::attachToWindow(sourcemeta::native::Window &window) -> void {
                       RECT bounds;
                       GetClientRect(internal->parentHwnd, &bounds);
                       internal->controller->put_Bounds(bounds);
-                      internal->webview->Navigate(L"https://www.google.com");
                       internal->ready = true;
+
+                      // Load the URL if it was set before the WebView was ready
+                      if (internal->url.has_value()) {
+                        const auto url = internal->url.value();
+                        internal->webview->Navigate(
+                            std::wstring(url.begin(), url.end()).c_str());
+                      }
                       return S_OK;
                     })
                     .Get());
             return S_OK;
           })
           .Get());
+}
+
+auto WebView::loadUrl(const std::string &url) -> void {
+  auto internal = static_cast<WebViewInternal *>(internal_);
+  if (internal->webview) {
+    internal->webview->Navigate(std::wstring(url.begin(), url.end()).c_str());
+  } else {
+    // If the WebView is not ready, store the URL to load when it is ready
+    internal->url = url;
+  }
 }
 } // namespace sourcemeta::native
