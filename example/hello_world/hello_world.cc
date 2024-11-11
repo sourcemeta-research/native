@@ -19,6 +19,7 @@ public:
 
 #ifdef _WIN32
     window.add(webview);
+    webview.loadUrl("https://www.sourcemeta.com");
 #endif
 
     this->exit();
