@@ -56,7 +56,7 @@ auto WebView::resize() -> void {
   };
 }
 
-auto WebView::attachToWindow(sourcemeta::native::Window &window) -> void {
+auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
   auto internal = static_cast<WebViewInternal *>(internal_);
   internal->parentHwnd = static_cast<HWND>(window.handle());
 
@@ -97,7 +97,7 @@ auto WebView::attachToWindow(sourcemeta::native::Window &window) -> void {
           .Get());
 }
 
-auto WebView::loadUrl(const std::string &url) -> void {
+auto WebView::load_url(const std::string &url) -> void {
   auto internal = static_cast<WebViewInternal *>(internal_);
   if (internal->webview) {
     internal->webview->Navigate(std::wstring(url.begin(), url.end()).c_str());

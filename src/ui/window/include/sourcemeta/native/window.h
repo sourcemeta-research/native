@@ -21,9 +21,10 @@ private:
   using Internal = void *;
   Internal internal_;
 
+  // TODO(tonygo): Hide this implementation detail
   template <typename T> void add_(T &child) {
-    if constexpr (requires { child.attachToWindow(*this); }) {
-      child.attachToWindow(*this);
+    if constexpr (requires { child.attach_to(*this); }) {
+      child.attach_to(*this);
     }
   }
 };
