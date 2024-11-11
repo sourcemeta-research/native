@@ -18,8 +18,8 @@ public:
     window.show();
 
 #ifdef _WIN32
+    webview.load_url("https://www.sourcemeta.com");
     window.add(webview);
-    webview.loadUrl("https://www.sourcemeta.com");
 #endif
 
     this->exit();

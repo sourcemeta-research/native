@@ -17,18 +17,17 @@ public:
   void operator=(WebView const &) = delete;
 
   // Core functionality
-  auto attachToWindow(sourcemeta::native::Window &window) -> void;
-  auto loadUrl(const std::string &url) -> void;
-  // auto loadHtml(const std::string& html) -> void;
+  auto attach_to(sourcemeta::native::Window &window) -> void;
+  auto load_url(const std::string &url) -> void;
+  // auto load_html(const std::string& html) -> void;
 
   // IPC messaging
-  // auto sendMessage(const std::string& channel, const std::string& message) ->
-  // void; auto onMessage(const std::string& channel, void (*callback)(const
+  // auto send_message(const std::string& channel, const std::string& message)
+  // -> void; auto on_message(const std::string& channel, void (*callback)(const
   // std::string&)) -> void;
 
   // Size control
   auto resize() -> void;
-  // auto hide() -> void;
 
 private:
   using Internal = void *;
