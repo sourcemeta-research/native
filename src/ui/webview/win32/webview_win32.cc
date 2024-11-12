@@ -56,7 +56,6 @@ public:
   // Idealy, we would prefer to have a generic type as parent as in the future
   // WebView could be the child of a Container class, mixed with others UI
   // classes.
-  HWND parent;
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
 
@@ -81,11 +80,15 @@ public:
   }
 
   auto fit_to_window() -> void {
-    if (this->controller && this->parent) {
+    if (this->controller && this->parent_) {
       RECT bounds;
-      GetClientRect(this->parent, &bounds);
+      GetClientRect(this->parent_, &bounds);
       this->controller->put_Bounds(bounds);
     };
+  }
+
+  auto set_parent(void *parent) -> void {
+    this->parent_ = static_cast<HWND>(parent);
   }
 
   auto create_webview(std::function<void()> callback) -> void {
@@ -95,7 +98,7 @@ public:
             [this, callback](HRESULT result,
                              ICoreWebView2Environment *env) -> HRESULT {
               env->CreateCoreWebView2Controller(
-                  this->parent,
+                  this->parent_,
                   Callback<
                       ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
                       [this, callback](
@@ -115,6 +118,9 @@ public:
             })
             .Get());
   }
+
+private:
+  HWND parent_;
 };
 
 /*
@@ -148,7 +154,7 @@ auto WebView::resize() -> void {
 
 auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
   auto internal = static_cast<WebView::Internal *>(internal_);
-  internal->parent = static_cast<HWND>(window.handle());
+  internal->set_parent(window.handle());
 
   window.on_resize([this]() { this->resize(); });
 
