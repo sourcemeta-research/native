@@ -23,7 +23,7 @@ public:
     window.add(webview);
 #endif
 
-    // this->exit();
+    this->exit();
   }
 
   auto on_error(std::exception_ptr) noexcept -> void override {}
