@@ -18,8 +18,10 @@ public:
 
   // Core functionality
   auto attach_to(sourcemeta::native::Window &window) -> void;
+
+  // Load content
   auto load_url(const std::string &url) -> void;
-  // auto load_html(const std::string& html) -> void;
+  auto load_html(const std::string &html_path) -> void;
 
   // IPC messaging
   // auto send_message(const std::string& channel, const std::string& message)
@@ -30,8 +32,8 @@ public:
   auto resize() -> void;
 
 private:
-  using Internal = void *;
-  Internal internal_;
+  class Internal;
+  Internal *internal_;
 };
 
 } // namespace sourcemeta::native

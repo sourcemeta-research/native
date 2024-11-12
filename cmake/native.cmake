@@ -1,5 +1,5 @@
 function(native_add_app)
-  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "" ${ARGN})
+  cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "ASSETS" ${ARGN})
 
   if(APPLE)
     _native_add_app_apple(${ARGN})
@@ -12,6 +12,27 @@ function(native_add_app)
   string(TOUPPER "${NATIVE_PLATFORM}" NATIVE_PLATFORM_UPPER)
   target_compile_definitions(${NATIVE_TARGET} PRIVATE
     "NATIVE_${NATIVE_PLATFORM_UPPER}=1")
+endfunction()
+
+function(native_add_assets)
+    cmake_parse_arguments(NATIVE "" "TARGET" "ASSETS" ${ARGN})
+
+    if(NOT NATIVE_TARGET)
+        message(FATAL_ERROR "You must specify a target")
+    endif()
+
+    if(NOT NATIVE_ASSETS)
+        message(FATAL_ERROR "You must specify assets")
+    endif()
+
+    foreach(asset IN LISTS NATIVE_ASSETS)
+        add_custom_command(
+            TARGET ${NATIVE_TARGET}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_CURRENT_BINARY_DIR}/assets/${asset}
+            COMMENT "Copying asset: ${asset} \n"
+        )
+    endforeach()
 endfunction()
 
 # Function to set profile properties for the app, including code signing identity

@@ -13,6 +13,10 @@ native_add_app(
     PLATFORM desktop
     SOURCES hello_world.cc)
 
+native_add_assets(
+    TARGET hello_world_app
+    ASSETS index.html style.css)
+
 native_set_profile(
     TARGET hello_world_app
     NAME "example_hello_world"

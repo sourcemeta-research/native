@@ -5,6 +5,7 @@
 #endif
 
 #include <exception>
+#include <filesystem>
 #include <iostream>
 
 class App : public sourcemeta::native::Application {
@@ -18,7 +19,7 @@ public:
     window.show();
 
 #ifdef _WIN32
-    webview.load_url("https://www.sourcemeta.com");
+    webview.load_html("index.html");
     window.add(webview);
 #endif
 
