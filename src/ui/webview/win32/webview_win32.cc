@@ -17,6 +17,12 @@ using namespace Microsoft::WRL;
 
 namespace sourcemeta::native {
 
+/*
+ *
+ * Internals for win32
+ *
+ */
+
 struct WebViewInternal {
   bool ready{false};
   std::optional<std::string> url;
@@ -25,6 +31,12 @@ struct WebViewInternal {
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
 };
+
+/*
+ *
+ * Internals helpers
+ *
+ */
 
 static auto get_assets_path() -> std::filesystem::path {
   return std::filesystem::current_path() / "assets";
@@ -56,6 +68,12 @@ static auto read_from_assets(const std::string &path)
 
   return content;
 }
+
+/*
+ *
+ * WebView API
+ *
+ */
 
 WebView::WebView() : internal_(new WebViewInternal{}) {}
 
