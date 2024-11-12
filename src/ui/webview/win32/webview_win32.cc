@@ -87,6 +87,34 @@ public:
       this->controller->put_Bounds(bounds);
     };
   }
+
+  auto create_webview(std::function<void()> callback) -> void {
+    CreateCoreWebView2EnvironmentWithOptions(
+        nullptr, nullptr, nullptr,
+        Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
+            [this, callback](HRESULT result,
+                             ICoreWebView2Environment *env) -> HRESULT {
+              env->CreateCoreWebView2Controller(
+                  this->parent,
+                  Callback<
+                      ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+                      [this, callback](
+                          HRESULT result,
+                          ICoreWebView2Controller *controller) -> HRESULT {
+                        this->controller = controller;
+                        this->controller->get_CoreWebView2(&this->webview);
+
+                        // Set internals to ready
+                        this->ready = true;
+
+                        callback();
+                        return S_OK;
+                      })
+                      .Get());
+              return S_OK;
+            })
+            .Get());
+  }
 };
 
 /*
@@ -124,40 +152,18 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 
   window.on_resize([this]() { this->resize(); });
 
-  CreateCoreWebView2EnvironmentWithOptions(
-      nullptr, nullptr, nullptr,
-      Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
-          [internal](HRESULT result, ICoreWebView2Environment *env) -> HRESULT {
-            env->CreateCoreWebView2Controller(
-                internal->parent,
-                Callback<
-                    ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-                    [internal](HRESULT result,
-                               ICoreWebView2Controller *controller) -> HRESULT {
-                      internal->controller = controller;
-                      internal->controller->get_CoreWebView2(
-                          &internal->webview);
+  internal->create_webview([internal]() {
+    // Set the bounds of the WebView to match the bounds
+    // of the parent window
+    internal->fit_to_window();
 
-                      // Set the bounds of the WebView to match the bounds
-                      // of the parent window
-                      internal->fit_to_window();
-
-                      // Set internals to ready
-                      internal->ready = true;
-
-                      // Load the URL if it was set before the WebView was ready
-                      if (internal->url.has_value()) {
-                        internal->natvigate_to_url();
-                      } else if (internal->html_content.has_value()) {
-                        internal->navigate_to_html();
-                      }
-
-                      return S_OK;
-                    })
-                    .Get());
-            return S_OK;
-          })
-          .Get());
+    // Load the URL if it was set before the WebView was ready
+    if (internal->url.has_value()) {
+      internal->natvigate_to_url();
+    } else if (internal->html_content.has_value()) {
+      internal->navigate_to_html();
+    }
+  });
 }
 
 auto WebView::load_url(const std::string &url) -> void {
