@@ -60,6 +60,13 @@ public:
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
 
+  auto natvigate_to_url() -> void {
+    assert(this->url.has_value());
+    auto url_ = this->url.value();
+
+    this->webview->Navigate(std::wstring(url_.begin(), url_.end()).c_str());
+  }
+
   auto navigate_to_html() -> void {
     assert(this->html_content.has_value());
 
@@ -140,9 +147,7 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 
                       // Load the URL if it was set before the WebView was ready
                       if (internal->url.has_value()) {
-                        const auto url = internal->url.value();
-                        internal->webview->Navigate(
-                            std::wstring(url.begin(), url.end()).c_str());
+                        internal->natvigate_to_url();
                       } else if (internal->html_content.has_value()) {
                         internal->navigate_to_html();
                       }
