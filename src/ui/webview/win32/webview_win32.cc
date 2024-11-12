@@ -168,11 +168,9 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 
 auto WebView::load_url(const std::string &url) -> void {
   auto internal = static_cast<WebView::Internal *>(internal_);
+  internal->url = url;
   if (internal->webview) {
-    internal->webview->Navigate(std::wstring(url.begin(), url.end()).c_str());
-  } else {
-    // If the WebView is not ready, store the URL to load when it is ready
-    internal->url = url;
+    internal->natvigate_to_url();
   }
 }
 
