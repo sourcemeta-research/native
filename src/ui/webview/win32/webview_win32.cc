@@ -69,6 +69,14 @@ static auto read_from_assets(const std::string &path)
   return content;
 }
 
+static auto fit_to_window(WebViewInternal *internal) -> void {
+  if (internal->controller && internal->parentHwnd) {
+    RECT bounds;
+    GetClientRect(internal->parentHwnd, &bounds);
+    internal->controller->put_Bounds(bounds);
+  };
+}
+
 /*
  *
  * WebView API
@@ -102,11 +110,7 @@ WebView::~WebView() {
 
 auto WebView::resize() -> void {
   auto internal = static_cast<WebViewInternal *>(internal_);
-  if (internal->controller) {
-    RECT bounds;
-    GetClientRect(internal->parentHwnd, &bounds);
-    internal->controller->put_Bounds(bounds);
-  };
+  fit_to_window(internal);
 }
 
 auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
@@ -131,9 +135,9 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 
                       // Set the bounds of the WebView to match the bounds
                       // of the parent window
-                      RECT bounds;
-                      GetClientRect(internal->parentHwnd, &bounds);
-                      internal->controller->put_Bounds(bounds);
+                      fit_to_window(internal);
+
+                      // Set internals to ready
                       internal->ready = true;
 
                       // Load the URL if it was set before the WebView was ready
@@ -146,6 +150,7 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
                             internal->html_content.value();
                         set_html_content(internal, html_content);
                       }
+
                       return S_OK;
                     })
                     .Get());
