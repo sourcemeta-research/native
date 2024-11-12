@@ -40,6 +40,23 @@ static auto set_html_content(WebViewInternal *internal,
       std::wstring(html_content.begin(), html_content.end()).c_str());
 }
 
+static auto read_from_assets(const std::string &path)
+    -> std::optional<std::string> {
+  auto final_path = get_assets_path() / path;
+  std::ifstream file(final_path);
+  if (!file.is_open()) {
+    std::cerr << "Failed to open file: " << final_path << std::endl;
+    return std::nullopt;
+  }
+
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string content = buffer.str();
+  file.close();
+
+  return content;
+}
+
 WebView::WebView() : internal_(new WebViewInternal{}) {}
 
 WebView::~WebView() {
@@ -130,25 +147,18 @@ auto WebView::load_url(const std::string &url) -> void {
 }
 
 auto WebView::load_html(const std::string &html_path) -> void {
-  auto final_path = get_assets_path() / html_path;
-  std::ifstream file(final_path);
-  if (!file.is_open()) {
-    std::cerr << "Failed to open HTML file: " << final_path << std::endl;
+  auto html_content = read_from_assets(html_path);
+  if (!html_content.has_value()) {
     return;
   }
 
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string html_content = buffer.str();
-  file.close();
-
   auto internal = static_cast<WebViewInternal *>(internal_);
   if (internal->webview) {
-    set_html_content(internal, html_content);
+    set_html_content(internal, html_content.value());
   } else {
     // If the WebView is not ready, store the HTML content to load when it is
     // ready
-    internal->html_content = html_content;
+    internal->html_content = html_content.value();
   }
 }
 } // namespace sourcemeta::native
