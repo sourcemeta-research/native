@@ -82,13 +82,13 @@ public:
   auto fit_to_window() -> void {
     if (this->controller && this->parent_) {
       RECT bounds;
-      GetClientRect(this->parent_, &bounds);
+      GetClientRect(*this->parent_, &bounds);
       this->controller->put_Bounds(bounds);
     };
   }
 
   auto set_parent(void *parent) -> void {
-    this->parent_ = static_cast<HWND>(parent);
+    this->parent_ = static_cast<HWND *>(parent);
   }
 
   auto create_webview(std::function<void()> callback) -> void {
@@ -98,7 +98,7 @@ public:
             [this, callback](HRESULT result,
                              ICoreWebView2Environment *env) -> HRESULT {
               env->CreateCoreWebView2Controller(
-                  this->parent_,
+                  *this->parent_,
                   Callback<
                       ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
                       [this, callback](
@@ -120,7 +120,7 @@ public:
   }
 
 private:
-  HWND parent_;
+  HWND *parent_;
 };
 
 /*

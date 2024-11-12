@@ -95,7 +95,7 @@ auto Window::show() -> void {
 
 auto Window::handle() -> void * {
   auto internal = static_cast<WindowInternal *>(internal_);
-  return internal->hwnd;
+  return &internal->hwnd;
 }
 
 auto Window::on_resize(std::function<void(void)> callback) -> void {
