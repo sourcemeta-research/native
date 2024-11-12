@@ -32,8 +32,8 @@ public:
   auto resize() -> void;
 
 private:
-  using Internal = void *;
-  Internal internal_;
+  class Internal;
+  Internal *internal_;
 };
 
 } // namespace sourcemeta::native
