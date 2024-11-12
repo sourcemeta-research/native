@@ -27,7 +27,11 @@ struct WebViewInternal {
   bool ready{false};
   std::optional<std::string> url;
   std::optional<std::string> html_content;
-  HWND parentHwnd;
+
+  // Idealy, we would prefer to have a generic type as parent as in the future
+  // WebView could be the child of a Container class, mixed with others UI
+  // classes.
+  HWND parent;
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
 };
@@ -70,9 +74,9 @@ static auto read_from_assets(const std::string &path)
 }
 
 static auto fit_to_window(WebViewInternal *internal) -> void {
-  if (internal->controller && internal->parentHwnd) {
+  if (internal->controller && internal->parent) {
     RECT bounds;
-    GetClientRect(internal->parentHwnd, &bounds);
+    GetClientRect(internal->parent, &bounds);
     internal->controller->put_Bounds(bounds);
   };
 }
@@ -115,7 +119,7 @@ auto WebView::resize() -> void {
 
 auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
   auto internal = static_cast<WebViewInternal *>(internal_);
-  internal->parentHwnd = static_cast<HWND>(window.handle());
+  internal->parent = static_cast<HWND>(window.handle());
 
   window.on_resize([this]() { this->resize(); });
 
@@ -124,7 +128,7 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
       Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
           [internal](HRESULT result, ICoreWebView2Environment *env) -> HRESULT {
             env->CreateCoreWebView2Controller(
-                internal->parentHwnd,
+                internal->parent,
                 Callback<
                     ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
                     [internal](HRESULT result,
