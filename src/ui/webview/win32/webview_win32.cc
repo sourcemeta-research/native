@@ -6,8 +6,11 @@
 #include <windows.h>
 #include <wrl.h>
 
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <string>
 
 using namespace Microsoft::WRL;
@@ -17,10 +20,22 @@ namespace sourcemeta::native {
 struct WebViewInternal {
   bool ready{false};
   std::optional<std::string> url;
+  std::optional<std::string> html_content;
   HWND parentHwnd;
   ComPtr<ICoreWebView2Controller> controller;
   ComPtr<ICoreWebView2> webview;
 };
+
+static auto set_html_content(WebViewInternal *internal,
+                             const std::string &html_content) -> void {
+  auto webview23 = reinterpret_cast<ICoreWebView2_3 *>(internal->webview.Get());
+  auto asset_path = std::filesystem::current_path() / "Debug";
+  webview23->SetVirtualHostNameToFolderMapping(
+      L"native.assets", asset_path.c_str(),
+      COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
+  internal->webview->NavigateToString(
+      std::wstring(html_content.begin(), html_content.end()).c_str());
+}
 
 WebView::WebView() : internal_(new WebViewInternal{}) {}
 
@@ -88,6 +103,10 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
                         const auto url = internal->url.value();
                         internal->webview->Navigate(
                             std::wstring(url.begin(), url.end()).c_str());
+                      } else if (internal->html_content.has_value()) {
+                        const auto html_content =
+                            internal->html_content.value();
+                        set_html_content(internal, html_content);
                       }
                       return S_OK;
                     })
@@ -104,6 +123,29 @@ auto WebView::load_url(const std::string &url) -> void {
   } else {
     // If the WebView is not ready, store the URL to load when it is ready
     internal->url = url;
+  }
+}
+
+auto WebView::load_html(const std::string &html_path) -> void {
+  auto final_path = std::filesystem::current_path() / "Debug" / html_path;
+  std::ifstream file(final_path);
+  if (!file.is_open()) {
+    std::cerr << "Failed to open HTML file: " << final_path << std::endl;
+    return;
+  }
+
+  std::stringstream buffer;
+  buffer << file.rdbuf();
+  std::string html_content = buffer.str();
+  file.close();
+
+  auto internal = static_cast<WebViewInternal *>(internal_);
+  if (internal->webview) {
+    set_html_content(internal, html_content);
+  } else {
+    // If the WebView is not ready, store the HTML content to load when it is
+    // ready
+    internal->html_content = html_content;
   }
 }
 } // namespace sourcemeta::native
