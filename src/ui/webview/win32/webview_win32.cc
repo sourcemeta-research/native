@@ -94,22 +94,15 @@ WebView::~WebView() {
   if (internal_) {
     auto internal = static_cast<WebView::Internal *>(internal_);
 
-    if (internal->ready) {
-      std::cout << "WebView::~WebView(): cleaning up WebView" << std::endl;
+    std::cout << "WebView::~WebView(): cleaning up WebView" << std::endl;
 
-      // Close and release WebView resources
-      if (internal->controller) {
-        internal->controller->Close();
-        internal->controller = nullptr;
-      }
-      if (internal->webview) {
-        internal->webview = nullptr;
-      }
+    // Close and release WebView resources
+    if (internal->controller) {
+      internal->controller->Close();
     }
 
     // Delete internal state
     delete internal;
-    internal_ = nullptr;
   }
 }
 
