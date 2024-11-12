@@ -29,7 +29,7 @@ struct WebViewInternal {
 static auto set_html_content(WebViewInternal *internal,
                              const std::string &html_content) -> void {
   auto webview23 = reinterpret_cast<ICoreWebView2_3 *>(internal->webview.Get());
-  auto asset_path = std::filesystem::current_path() / "Debug";
+  auto asset_path = std::filesystem::current_path() / "assets";
   webview23->SetVirtualHostNameToFolderMapping(
       L"native.assets", asset_path.c_str(),
       COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
@@ -127,7 +127,7 @@ auto WebView::load_url(const std::string &url) -> void {
 }
 
 auto WebView::load_html(const std::string &html_path) -> void {
-  auto final_path = std::filesystem::current_path() / "Debug" / html_path;
+  auto final_path = std::filesystem::current_path() / "assets" / html_path;
   std::ifstream file(final_path);
   if (!file.is_open()) {
     std::cerr << "Failed to open HTML file: " << final_path << std::endl;

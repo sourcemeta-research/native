@@ -29,7 +29,7 @@ function(native_add_assets)
         add_custom_command(
             TARGET ${NATIVE_TARGET}
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} $<TARGET_FILE_DIR:${NATIVE_TARGET}>/${asset}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_CURRENT_BINARY_DIR}/assets/${asset}
             COMMENT "Copying asset: ${asset} \n"
         )
     endforeach()
