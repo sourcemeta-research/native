@@ -22,6 +22,8 @@ public:
     }
   }
 
+  auto get_webview() -> WKWebView * { return webView_; }
+
 private:
   WKWebView *webView_;
 };
@@ -34,8 +36,13 @@ auto WebView::resize() -> void {
   // Implement resize if needed
 }
 
-auto WebView::attach_to(sourcemeta::native::Window &) -> void {
-  // Implement attach_to if needed
+auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
+  NSWindow *native_window = static_cast<NSWindow *>(window.handle());
+  WKWebView *webview = internal_->get_webview();
+
+  NSView *contentView = [native_window contentView];
+  [webview setFrame:contentView.bounds];
+  [contentView addSubview:webview];
 }
 
 auto WebView::load_url(const std::string &url) -> void {

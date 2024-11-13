@@ -74,4 +74,6 @@ auto Window::show() -> void {
   [controller showWindow:nil];
   [window makeKeyAndOrderFront:controller];
 }
+
+auto Window::handle() -> void * { return internal_; }
 } // namespace sourcemeta::native
