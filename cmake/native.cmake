@@ -162,6 +162,8 @@ function(_native_link_modules_apple)
     # Link the module to the target
     if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::appkit)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "ui/webview")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::webview::appkit)
     elseif(${NATIVE_MODULE_MODULE} STREQUAL "sysmod/args")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::args::foundation)
     else()
