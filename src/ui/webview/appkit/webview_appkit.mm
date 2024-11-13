@@ -42,6 +42,7 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 
   NSView *contentView = [native_window contentView];
   [webview setFrame:contentView.bounds];
+  [webview setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   [contentView addSubview:webview];
 }
 
