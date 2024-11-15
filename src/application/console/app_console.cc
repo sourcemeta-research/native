@@ -1,5 +1,7 @@
 #include <sourcemeta/native/application.h>
 
+#include <cassert>
+
 namespace sourcemeta::native {
 
 Application::Application() {}
