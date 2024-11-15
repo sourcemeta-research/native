@@ -19,7 +19,7 @@ public:
     webview.load_url("https://sourcemeta.com");
     window.add(webview);
 
-    // this->exit();
+    this->exit();
   }
 
   auto on_error(std::exception_ptr) noexcept -> void override {}
