@@ -1,180 +1,105 @@
 <p align="center"><img width="300px" src="./logo.png" alt="native framework logo"/></p>
 <h1 align="center">native</h1>
-<h3 align="center">Build your macOS app with C++</h3>
+<h3 align="center">Build your Desktop application with C++</h3>
 
-Native is a robust C++ framework designed to streamline the development of native applications for C++ developers.
+Native is a C++ framework designed to streamline the development of native applications for C++ developers.
 
-> ✋ Native is currently available for macOS. Support for Windows and GNU/Linux is under development and will be coming soon.
+> ✋ Native is currently available in alpha for macOS and Windows.
 
 ## ✨ Features
 
 -  🚀 **Modern C++ API**: Streamlined API for modern C++.
 -  🛠 **CMake Integration**: Seamless integration with CMake projects.
--  📦 **Packaging Ready**: Includes code signing and notarization.
+-  📦 **Packaging Ready**: Includes code signing for macOS (notarization is comming)
 -  🧩 **Modular Architecture**: Opt-in modules for tailored functionality.
 
-## Install
-
-### macOS
-
-```
-brew install native
-```
-
-## Getting Started with Native
-
-Native can be seamlessly integrated into your projects in two distinct ways, depending on your setup and preferences:
-
-- **Command Line Interface (CLI)**: Ideal for developers beginning a new project from scratch. 
-  The CLI provides a simplified, straightforward method to scaffold and manage your application 
-  without manual setup complexities.
-
-- **CMake Macros**: Best suited for developers looking to integrate Native into an existing CMake project.
-  This method leverages custom CMake macros to facilitate integration, ensuring that you can easily include 
-  Native without disrupting your project's existing structure.
-
-### CLI
+## Getting Started with Native using CMake
 
 1. Code!
    
-   ```cc
-   #include <sourcemeta/native/ui/text.h>
-   #include <sourcemeta/native/ui/container.h>
-   #include <sourcemeta/native/ui/window.h>
-   #include <sourcemeta/native/app.h>
+```cc
+#include <sourcemeta/native/application.h>
+#include <sourcemeta/native/webview.h>
+#include <sourcemeta/native/window.h>
 
-   using sourcemeta::native::ui;
+#include <exception>
+#include <iostream>
 
-   class App: public sourcemeta::native::Application {
-   public:
-       auto on_start() -> void override {}
+class App : public sourcemeta::native::Application {
+public:
+  auto on_start() -> void override { std::cout << "Starting!" << std::endl; }
 
-       auto on_ready() -> void override {
-           container.position(Container::Position::Horizontal);
-           text.set("Hello, world!");
-           container.add(text);
+  auto on_ready() -> void override {
+    std::cout << "Ready!" << std::endl;
 
-           window.add(container);
-           window.size(800, 600);
-           window.show();
-       }
+    window.size(1200, 900);
+    window.show();
 
-       auto on_error(std::exception_ptr) noexcept -> void override {}
+    // webview.load_html("index.html");
+    webview.load_url("https://sourcemeta.com");
+    window.add(webview);
 
-   private:
-       Window window;
-       Container container;
-       Text text;
-   };
+    this->exit();
+  }
 
-   NATIVE_RUN(App);
-   ```
+  auto on_error(std::exception_ptr) noexcept -> void override {}
 
-2. Configure!
+private:
+  sourcemeta::native::Window window;
+  sourcemeta::native::WebView webview;
+};
 
-   ```json
-   {
-       "sources": [ "main.cc" ],
-       "version": "1.0.0",
-       "name": "My application",
-       "description": "This is the description of my app.",
-       "modules": [ "ui/text", "ui/container", "ui/window" ]
-   }
-   ```
-
-3. Develop!
-
-   ```shell
-   native desktop develop
-   ```
-
-4. Release!
-
-   ```shell
-   native desktop package
-   ```
-
-### CMake
-
-1. Code!
-   
-   ```cc
-   #include <sourcemeta/native/ui/text.h>
-   #include <sourcemeta/native/ui/container.h>
-   #include <sourcemeta/native/ui/window.h>
-   #include <sourcemeta/native/app.h>
-
-   using sourcemeta::native::ui;
-
-   class App: public sourcemeta::native::Application {
-   public:
-       auto on_start() -> void override {}
-
-       auto on_ready() -> void override {
-           container.position(Container::Position::Horizontal);
-           text.set("Hello, world!");
-           container.add(text);
-
-           window.add(container);
-           window.size(800, 600);
-           window.show();
-       }
-
-       auto on_error(std::exception_ptr) noexcept -> void override {}
-
-   private:
-       Window window;
-       Container container;
-       Text text;
-   };
-
-   NATIVE_RUN(App);
-   ```
+NATIVE_RUN(App)
+```
 
 2. Configure!
 
-   ```cmake
-   cmake_minimum_required(VERSION 3.26)
+```cmake
+cmake_minimum_required(VERSION 3.14)
 
-   project(my_native_app LANGUAGES CXX)
+project(my_hello_world)
 
-   find_package(Native VERSION 1.0)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-   # This macro generates the following CMake targets:
-   # - native-app-develop
-   # - native-app-package
-   native_add_app(
-     TARGET app
-     PLATFORM desktop 
-     SOURCES main.cc)
+find_package(Native REQUIRED)
 
-   native_set_profile(
-     TARGET app
-     NAME "My App"
-     GUI_IDENTIFIER "com.native.my_app"
-     VERSION "1.0.0"
-     DESCRIPTION "My app first native app"
-     CODESIGN_IDENTITY "W4MF6H9XZ6"
-     MODULES "ui/window" "ui/container" "ui/text")
+native_add_app(
+    TARGET hello_world_app
+    PLATFORM desktop
+    SOURCES hello_world.cc)
 
-   # Then you can link whatever existing tragets to the `app` target. 
-   ```
+native_add_assets(
+    TARGET hello_world_app
+    ASSETS index.html style.css)
+
+native_set_profile(
+    TARGET hello_world_app
+    NAME "example_hello_world"
+    IDENTIFIER "com.native.example_hello_world"
+    VERSION "1.0.0"
+    DESCRIPTION "My app ..."
+    CODESIGN_IDENTITY "W4MF6H9XZ6"
+    MODULES "ui/window" "ui/webview")
+```
+
 
 3. Develop!
 
-   ```shell
-   cd build
+```shell
+cd build
 
-   cmake .. --config Debug
+cmake .. --config Debug
 
-   cmake --build . --config Debug --target native-app-develop
-   ```
+cmake --build . --config Debug --target native-app-develop
+```
 
 4. Release!
 
-   ```shell
-   cmake --build . --config Debug --target native-app-package
-   ```
+```shell
+cmake --build . --config Debug --target native-app-package
+```
 
 ## Contributing
 
@@ -193,8 +118,14 @@ Make sure you have the following tools installed:
     git clone https://github.com/sourcemeta-research/native.git
     cd native
     ```
+    
+2. **Install dependencies**:
+    ```sh
+    git clone https://github.com/sourcemeta-research/native.git
+    cd native
+    ```
 
-2. **Configure and build the project**:
+3. **Configure and build the project**:
     We use a Makefile to handle the build process, which in turn uses CMake. Simply run:
     ```sh
     make
@@ -202,7 +133,7 @@ Make sure you have the following tools installed:
 
     This will configure the project, build the necessary files, and run the executable.
 
-3. **Running the Executable**:
+4. **Running the Executable**:
     After building the project, you can run the executable to ensure everything is working as expected:
     ```sh
     make test
