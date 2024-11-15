@@ -1,11 +1,8 @@
 #include <sourcemeta/native/application.h>
-#include <sourcemeta/native/window.h>
-#ifdef _WIN32
 #include <sourcemeta/native/webview.h>
-#endif
+#include <sourcemeta/native/window.h>
 
 #include <exception>
-#include <filesystem>
 #include <iostream>
 
 class App : public sourcemeta::native::Application {
@@ -18,10 +15,9 @@ public:
     window.size(1200, 900);
     window.show();
 
-#ifdef _WIN32
-    webview.load_html("index.html");
+    // webview.load_html("index.html");
+    webview.load_url("https://sourcemeta.com");
     window.add(webview);
-#endif
 
     this->exit();
   }
@@ -30,9 +26,7 @@ public:
 
 private:
   sourcemeta::native::Window window;
-#ifdef _WIN32
   sourcemeta::native::WebView webview;
-#endif
 };
 
 NATIVE_RUN(App)

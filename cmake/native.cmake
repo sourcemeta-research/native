@@ -105,7 +105,12 @@ function(_native_set_profile_apple)
 
     # Iterate over the modules and link them
     foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
-        _native_link_modules_apple(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module})
+        set(ENTITLEMENTS_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/entitlements.plist")
+        if(NOT EXISTS "${ENTITLEMENTS_PATH}")
+            message(FATAL_ERROR "Entitlements file not found: ${ENTITLEMENTS_PATH}")
+        endif()
+
+        _native_link_modules_apple(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module} PLIST ${ENTITLEMENTS_PATH})
     endforeach()
 endfunction()
 
@@ -157,11 +162,15 @@ function(_native_codesign_apple)
 endfunction()
 
 function(_native_link_modules_apple)
-    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE" "" ${ARGN})
+    cmake_parse_arguments(NATIVE_MODULE "" "TARGET;MODULE;PLIST" "" ${ARGN})
 
     # Link the module to the target
     if(${NATIVE_MODULE_MODULE} STREQUAL "ui/window")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::window::appkit)
+    elseif(${NATIVE_MODULE_MODULE} STREQUAL "ui/webview")
+        target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::webview::appkit)
+        set(WEBVIEW_PLIST "${CMAKE_PREFIX_PATH}/lib/cmake/native/webview.plist")
+        _native_merge_plist(INPUT "${WEBVIEW_PLIST}" OUTPUT ${NATIVE_MODULE_PLIST})
     elseif(${NATIVE_MODULE_MODULE} STREQUAL "sysmod/args")
         target_link_libraries(${NATIVE_MODULE_TARGET} sourcemeta::native::args::foundation)
     else()
@@ -169,6 +178,22 @@ function(_native_link_modules_apple)
     endif()
 endfunction()
 
+function(_native_merge_plist)
+  cmake_parse_arguments(NATIVE_PLIST "" "INPUT;OUTPUT" "" ${ARGN})
+
+  if(NOT NATIVE_PLIST_INPUT)
+    message(FATAL_ERROR "Missing entitlements input file")
+  endif()
+  if(NOT NATIVE_PLIST_OUTPUT)
+    message(FATAL_ERROR "Missing entitlements output location")
+  endif()
+
+  message("Merging plist: ${NATIVE_PLIST_INPUT} into ${NATIVE_PLIST_OUTPUT}")
+
+  execute_process(COMMAND
+    /usr/libexec/PlistBuddy -x -c "Merge ${NATIVE_PLIST_INPUT}" "${NATIVE_PLIST_OUTPUT}"
+    COMMAND_ERROR_IS_FATAL ANY)
+endfunction()
 
 #
 #

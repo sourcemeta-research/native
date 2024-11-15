@@ -3,7 +3,6 @@
 
 #include <sourcemeta/native/application_entry.h>
 
-#include <cassert>
 #include <exception>
 #include <vector>
 

@@ -5,6 +5,7 @@ list(APPEND COMPONENTS
   "application_appkit"
   "application_foundation"
   "window_appkit"
+  "webview_appkit"
   "args_foundation")
 elseif (WIN32)
 list(APPEND COMPONENTS
