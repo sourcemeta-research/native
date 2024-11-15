@@ -31,7 +31,6 @@ Native is a C++ framework designed to streamline the development of native appli
 | **Open**         | 🚧 Planned          | 🚧 Planned          | Open URLs, URIs, and files                    |
 | **Storage**      | 🚧 Planned          | 🚧 Planned          | Key-value storage for app data                |
 | **HTTP Client**  | 🚧 Planned          | 🚧 Planned          | Send HTTP requests, handle responses          |
-| **HTTP Server**  | 🚧 Planned          | 🚧 Planned          | Lightweight server for local app interactions |
 
 ## Getting Started with Native using CMake
 
