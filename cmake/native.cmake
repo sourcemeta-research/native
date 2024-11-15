@@ -101,6 +101,8 @@ function(_native_set_profile_apple)
         _native_codesign_apple(TARGET "${NATIVE_PROPERTIES_TARGET}")
     endif()
 
+    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST_PATH})
+
     # Iterate over the modules and link them
     foreach(module IN LISTS NATIVE_PROPERTIES_MODULES)
         set(ENTITLEMENTS_PATH "${CMAKE_PREFIX_PATH}/lib/cmake/native/entitlements.plist")
@@ -110,8 +112,6 @@ function(_native_set_profile_apple)
 
         _native_link_modules_apple(TARGET ${NATIVE_PROPERTIES_TARGET} MODULE ${module} PLIST ${ENTITLEMENTS_PATH})
     endforeach()
-
-    set_target_properties(${NATIVE_PROPERTIES_TARGET} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST_PATH})
 endfunction()
 
 function(_native_codesign_apple)
