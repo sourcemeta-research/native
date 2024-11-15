@@ -4,7 +4,7 @@
 
 Native is a C++ framework designed to streamline the development of native applications for C++ developers.
 
-> ✋ Native is currently available in alpha for macOS and Windows.
+> ✋ Native is currently available in alpha for macOS and Windows, but *it is not production ready*!
 
 ## ✨ Features
 
@@ -12,6 +12,26 @@ Native is a C++ framework designed to streamline the development of native appli
 -  🛠 **CMake Integration**: Seamless integration with CMake projects.
 -  📦 **Packaging Ready**: Includes code signing for macOS (notarization is comming)
 -  🧩 **Modular Architecture**: Opt-in modules for tailored functionality.
+
+### Roadmap
+
+#### `ui`
+
+| Module       | macOS Support       | Win32 Support       | Notes                                |
+|--------------|---------------------|---------------------|--------------------------------------|
+| **Window**   | ✅ Supported        | ✅ Planned          | Basic window creation and management |
+| **WebView**  | ✅ Supported        | ✅ Planned          | Embeds web content in a native app   |
+| **Menu**     | 🚧 Planned          | 🚧 Planned          | Application menus                    |
+| **Tray**     | 🚧 Planned          | 🚧 Planned          | System tray icons and context menus  |
+
+#### `sysmod`
+
+| Module           | macOS Support       | Win32 Support       | Notes                                         |
+|------------------|---------------------|---------------------|-----------------------------------------------|
+| **Open**         | 🚧 Planned          | 🚧 Planned          | Open URLs, URIs, and files                    |
+| **Storage**      | 🚧 Planned          | 🚧 Planned          | Key-value storage for app data                |
+| **HTTP Client**  | 🚧 Planned          | 🚧 Planned          | Send HTTP requests, handle responses          |
+| **HTTP Server**  | 🚧 Planned          | 🚧 Planned          | Lightweight server for local app interactions |
 
 ## Getting Started with Native using CMake
 
