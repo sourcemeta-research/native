@@ -17,12 +17,13 @@ Native is a C++ framework designed to streamline the development of native appli
 
 #### `ui`
 
-| Module       | macOS Support       | Win32 Support       | Notes                                |
-|--------------|---------------------|---------------------|--------------------------------------|
-| **Window**   | ✅ Supported        | ✅ Planned          | Basic window creation and management |
-| **WebView**  | ✅ Supported        | ✅ Planned          | Embeds web content in a native app   |
-| **Menu**     | 🚧 Planned          | 🚧 Planned          | Application menus                    |
-| **Tray**     | 🚧 Planned          | 🚧 Planned          | System tray icons and context menus  |
+| Module       | macOS Support       | Win32 Support       | Notes                                                           |
+|--------------|---------------------|---------------------|-----------------------------------------------------------------|
+| **Window**   | ✅ Supported        | ✅ Supported        | Basic window creation and management                            |
+| **WebView**  | ✅ Supported        | ✅ Supported        | Embeds web content in a native app                              |
+| **Menu**     | 🚧 Planned          | 🚧 Planned          | Application menus                                               |
+| **IPC**      | 🚧 Planned          | 🚧 Planned          | Communication channel between the main process and the Webview. |
+| **Tray**     | 🚧 Planned          | 🚧 Planned          | System tray icons and context menus                             |
 
 #### `sysmod`
 
