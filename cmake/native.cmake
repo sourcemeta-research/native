@@ -15,25 +15,15 @@ function(native_add_app)
 endfunction()
 
 function(native_add_assets)
-    cmake_parse_arguments(NATIVE "" "TARGET" "ASSETS" ${ARGN})
-
-    if(NOT NATIVE_TARGET)
-        message(FATAL_ERROR "You must specify a target")
+    if(APPLE)
+        _native_add_assets_apple(${ARGN})
+    elseif(WIN32)
+        _native_add_assets_win32(${ARGN})
+    else()
+        message(FATAL_ERROR "We only support Apple and Win32 platforms")
     endif()
-
-    if(NOT NATIVE_ASSETS)
-        message(FATAL_ERROR "You must specify assets")
-    endif()
-
-    foreach(asset IN LISTS NATIVE_ASSETS)
-        add_custom_command(
-            TARGET ${NATIVE_TARGET}
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_CURRENT_BINARY_DIR}/assets/${asset}
-            COMMENT "Copying asset: ${asset} \n"
-        )
-    endforeach()
 endfunction()
+
 
 # Function to set profile properties for the app, including code signing identity
 function(native_set_profile)
@@ -178,6 +168,25 @@ function(_native_link_modules_apple)
     endif()
 endfunction()
 
+function(_native_add_assets_apple)
+    cmake_parse_arguments(NATIVE "" "TARGET" "ASSETS" ${ARGN})
+
+    if(NOT NATIVE_TARGET)
+        message(FATAL_ERROR "You must specify a target")
+    endif()
+
+    if(NOT NATIVE_ASSETS)
+        message(FATAL_ERROR "You must specify assets")
+    endif()
+
+    # How to copy assets into the bundle
+    foreach(asset IN LISTS NATIVE_ASSETS)
+        target_sources(${NATIVE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/${asset})
+        set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/${asset} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    endforeach()
+
+endfunction()
+
 function(_native_merge_plist)
   cmake_parse_arguments(NATIVE_PLIST "" "INPUT;OUTPUT" "" ${ARGN})
 
@@ -255,4 +264,25 @@ function(_native_link_modules_win32)
     else()
         message(WARNING "Unknown module: ${NATIVE_MODULE_MODULE}")
     endif()
+endfunction()
+
+function(_native_add_assets_win32)
+    cmake_parse_arguments(NATIVE "" "TARGET" "ASSETS" ${ARGN})
+
+    if(NOT NATIVE_TARGET)
+        message(FATAL_ERROR "You must specify a target")
+    endif()
+
+    if(NOT NATIVE_ASSETS)
+        message(FATAL_ERROR "You must specify assets")
+    endif()
+
+    foreach(asset IN LISTS NATIVE_ASSETS)
+        add_custom_command(
+            TARGET ${NATIVE_TARGET}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_CURRENT_BINARY_DIR}/assets/${asset}
+            COMMENT "Copying asset: ${asset} \n"
+        )
+    endforeach()
 endfunction()
