@@ -3,11 +3,18 @@
 
 #import <WebKit/WebKit.h>
 
+#include <string>
+
 namespace sourcemeta::native {
 
 class WebView::Internal {
 public:
-  Internal() { webView_ = [[WKWebView alloc] initWithFrame:CGRectZero]; }
+  Internal() {
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+    [config.preferences setValue:@YES forKey:@"developerExtrasEnabled"];
+    webView_ = [[WKWebView alloc] initWithFrame:CGRectZero
+                                  configuration:config];
+  }
 
   ~Internal() { [webView_ release]; }
 
@@ -50,7 +57,18 @@ auto WebView::load_url(const std::string &url) -> void {
   internal_->load_url(url);
 }
 
-auto WebView::load_html(const std::string &) -> void {
-  // Placeholder for loading HTML
+auto WebView::load_html(const std::string &html_path) -> void {
+  NSString *html_filename = [NSString stringWithUTF8String:html_path.c_str()];
+  NSString *html_filename_without_extension =
+      html_filename.stringByDeletingPathExtension;
+  NSBundle *bundle = [NSBundle mainBundle];
+  NSString *path = [bundle pathForResource:html_filename_without_extension
+                                    ofType:@"html"];
+  NSString *html = [NSString stringWithContentsOfFile:path
+                                             encoding:NSUTF8StringEncoding
+                                                error:nil];
+
+  WKWebView *webview = internal_->get_webview();
+  [webview loadHTMLString:html baseURL:bundle.bundleURL];
 }
 } // namespace sourcemeta::native
