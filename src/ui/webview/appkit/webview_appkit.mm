@@ -69,6 +69,6 @@ auto WebView::load_html(const std::string &html_path) -> void {
                                                 error:nil];
 
   WKWebView *webview = internal_->get_webview();
-  [webview loadHTMLString:html baseURL:bundle.bundleURL];
+  [webview loadHTMLString:html baseURL:[bundle resourceURL]];
 }
 } // namespace sourcemeta::native
