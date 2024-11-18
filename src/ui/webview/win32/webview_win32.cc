@@ -19,23 +19,7 @@ using namespace Microsoft::WRL;
 // TODO(tonygo): let see if we cannot put it in a common namespace
 namespace {
 static auto get_assets_path() -> std::filesystem::path {
-  return std::filesystem::current_path() / "assets";
-}
-
-auto read_from_assets(const std::string &path) -> std::optional<std::string> {
-  auto final_path = get_assets_path() / path;
-  std::ifstream file(final_path);
-  if (!file.is_open()) {
-    std::cerr << "Failed to open file: " << final_path << std::endl;
-    return std::nullopt;
-  }
-
-  std::stringstream buffer;
-  buffer << file.rdbuf();
-  std::string content = buffer.str();
-  file.close();
-
-  return content;
+  return std::filesystem::current_path();
 }
 } // namespace
 
@@ -51,7 +35,7 @@ class WebView::Internal {
 public:
   bool ready{false};
   std::optional<std::string> url;
-  std::optional<std::string> html_content;
+  std::optional<std::string> html_filename;
 
   // Idealy, we would prefer to have a generic type as parent as in the future
   // WebView could be the child of a Container class, mixed with others UI
@@ -67,16 +51,9 @@ public:
   }
 
   auto navigate_to_html() -> void {
-    assert(this->html_content.has_value());
-
-    auto content = this->html_content.value();
-    auto webview23 = reinterpret_cast<ICoreWebView2_3 *>(this->webview.Get());
-
-    webview23->SetVirtualHostNameToFolderMapping(
-        L"native.assets", get_assets_path().c_str(),
-        COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_ALLOW);
-    this->webview->NavigateToString(
-        std::wstring(content.begin(), content.end()).c_str());
+    assert(this->html_filename.has_value());
+    auto content_path = get_assets_path() / this->html_filename.value();
+    this->webview->Navigate(content_path.c_str());
   }
 
   auto fit_to_window() -> void {
@@ -166,7 +143,7 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
     // Load the URL if it was set before the WebView was ready
     if (internal->url.has_value()) {
       internal->natvigate_to_url();
-    } else if (internal->html_content.has_value()) {
+    } else if (internal->html_filename.has_value()) {
       internal->navigate_to_html();
     }
   });
@@ -180,14 +157,9 @@ auto WebView::load_url(const std::string &url) -> void {
   }
 }
 
-auto WebView::load_html(const std::string &html_path) -> void {
-  auto html_content = read_from_assets(html_path);
-  if (!html_content.has_value()) {
-    return;
-  }
-
+auto WebView::load_html(const std::string &html_filename) -> void {
   auto internal = static_cast<WebView::Internal *>(internal_);
-  internal->html_content = html_content.value();
+  internal->html_filename = html_filename;
   if (internal->webview) {
     internal->navigate_to_html();
   }

@@ -48,8 +48,8 @@ function(add_example)
         add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)
     elseif(WIN32)
         add_custom_target(${EXAMPLE_NAME}_run
-            COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}/Debug/${EXAMPLE_APP_NAME}.exe"
-            WORKING_DIRECTORY "${EXAMPLE_BINARY_DIR}"
+            COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}/$<CONFIG>/${EXAMPLE_APP_NAME}.exe"
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}/$<CONFIG>"
             COMMENT "Running ${EXAMPLE_NAME} example (Windows)")
         add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)
     endif()
