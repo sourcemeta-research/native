@@ -15,8 +15,8 @@ public:
     window.size(1200, 900);
     window.show();
 
-    // webview.load_html("index.html");
-    webview.load_url("https://sourcemeta.com");
+    webview.load_html("index.html");
+    // webview.load_url("https://sourcemeta.com");
     window.add(webview);
 
     this->exit();
