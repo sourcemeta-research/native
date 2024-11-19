@@ -18,8 +18,8 @@ public:
   template <typename T> auto add(T &child) -> void { add_(child); }
 
 private:
-  using Internal = void *;
-  Internal internal_;
+  class Internal;
+  Internal *internal_;
 
   // TODO(tonygo): Hide this implementation detail
   template <typename T> void add_(T &child) {
