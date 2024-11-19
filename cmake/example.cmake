@@ -36,20 +36,18 @@ function(add_example)
     if(APPLE)
         if(EXAMPLE_TYPE STREQUAL "desktop")
             add_custom_target(${EXAMPLE_NAME}_run
-                COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}.app/Contents/MacOS/${EXAMPLE_APP_NAME}"
-                WORKING_DIRECTORY "${EXAMPLE_BINARY_DIR}"
+                COMMAND "${EXAMPLE_SOURCE_DIR}/dist/${EXAMPLE_APP_NAME}.app/Contents/MacOS/${EXAMPLE_APP_NAME}"
                 COMMENT "Running ${EXAMPLE_NAME} example (bundle)")
         else()
             add_custom_target(${EXAMPLE_NAME}_run
-                COMMAND "${EXAMPLE_BINARY_DIR}/${EXAMPLE_APP_NAME}" --foo bar
-                WORKING_DIRECTORY "${EXAMPLE_BINARY_DIR}"
+                COMMAND "${EXAMPLE_SOURCE_DIR}/dist/${EXAMPLE_APP_NAME}" --foo bar
                 COMMENT "Running ${EXAMPLE_NAME} example (executable)")
         endif()
         add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)
     elseif(WIN32)
         add_custom_target(${EXAMPLE_NAME}_run
-            COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}/$<CONFIG>/${EXAMPLE_APP_NAME}.exe"
-            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}/$<CONFIG>"
+            COMMAND "${EXAMPLE_SOURCE_DIR}/dist/$<CONFIG>/${EXAMPLE_APP_NAME}.exe"
+            WORKING_DIRECTORY "${EXAMPLE_SOURCE_DIR}/dist/$<CONFIG>"
             COMMENT "Running ${EXAMPLE_NAME} example (Windows)")
         add_dependencies(${EXAMPLE_NAME}_run ${EXAMPLE_NAME}_build)
     endif()

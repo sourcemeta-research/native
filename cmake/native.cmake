@@ -1,6 +1,8 @@
 function(native_add_app)
   cmake_parse_arguments(NATIVE "" "TARGET;PLATFORM" "ASSETS" ${ARGN})
 
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/dist")
+
   if(APPLE)
     _native_add_app_apple(${ARGN})
   elseif(WIN32)
@@ -281,7 +283,7 @@ function(_native_add_assets_win32)
         add_custom_command(
             TARGET ${NATIVE_TARGET}
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/${asset}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${asset} ${CMAKE_SOURCE_DIR}/dist/$<CONFIG>/${asset}
             COMMENT "Copying asset: ${asset} \n"
         )
     endforeach()
