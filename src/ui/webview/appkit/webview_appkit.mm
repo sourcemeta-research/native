@@ -29,6 +29,18 @@ public:
     }
   }
 
+  auto load_html(const std::string &html_path) -> void {
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSString *html_filename = [NSString stringWithUTF8String:html_path.c_str()];
+    NSString *html_filename_without_extension =
+        [html_filename stringByDeletingPathExtension];
+    NSURL *html_url = [bundle URLForResource:html_filename_without_extension
+                               withExtension:@"html"];
+
+    [this->get_webview() loadFileURL:html_url
+             allowingReadAccessToURL:[html_url URLByDeletingLastPathComponent]];
+  }
+
   auto get_webview() -> WKWebView * { return webView_; }
 
 private:
@@ -58,17 +70,6 @@ auto WebView::load_url(const std::string &url) -> void {
 }
 
 auto WebView::load_html(const std::string &html_path) -> void {
-  NSString *html_filename = [NSString stringWithUTF8String:html_path.c_str()];
-  NSString *html_filename_without_extension =
-      html_filename.stringByDeletingPathExtension;
-  NSBundle *bundle = [NSBundle mainBundle];
-  NSString *path = [bundle pathForResource:html_filename_without_extension
-                                    ofType:@"html"];
-  NSString *html = [NSString stringWithContentsOfFile:path
-                                             encoding:NSUTF8StringEncoding
-                                                error:nil];
-
-  WKWebView *webview = internal_->get_webview();
-  [webview loadHTMLString:html baseURL:[bundle resourceURL]];
+  internal_->load_html(html_path);
 }
 } // namespace sourcemeta::native
