@@ -18,7 +18,7 @@ public:
 
   ~Internal() { [webView_ release]; }
 
-  void load_url(const std::string &url) {
+  auto load_url(const std::string &url) -> void {
     NSString *urlString = [NSString stringWithUTF8String:url.c_str()];
     NSURL *nsUrl = [NSURL URLWithString:urlString];
     if (nsUrl) {
