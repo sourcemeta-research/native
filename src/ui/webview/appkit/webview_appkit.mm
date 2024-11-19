@@ -19,13 +19,13 @@ public:
   ~Internal() { [webView_ release]; }
 
   auto load_url(const std::string &url) -> void {
-    NSString *urlString = [NSString stringWithUTF8String:url.c_str()];
-    NSURL *nsUrl = [NSURL URLWithString:urlString];
-    if (nsUrl) {
-      NSURLRequest *request = [NSURLRequest requestWithURL:nsUrl];
+    NSString *url_ns_str = [NSString stringWithUTF8String:url.c_str()];
+    NSURL *url_ns = [NSURL URLWithString:url_ns_str];
+    if (url_ns) {
+      NSURLRequest *request = [NSURLRequest requestWithURL:url_ns];
       [webView_ loadRequest:request];
     } else {
-      NSLog(@"Invalid URL string: %@", urlString);
+      NSLog(@"Invalid URL string: %@", url_ns_str);
     }
   }
 
@@ -51,10 +51,6 @@ WebView::WebView() : internal_(new WebView::Internal{}) {}
 
 WebView::~WebView() { delete internal_; }
 
-auto WebView::resize() -> void {
-  // Implement resize if needed
-}
-
 auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
   NSWindow *native_window = static_cast<NSWindow *>(window.handle());
   WKWebView *webview = internal_->get_webview();
@@ -66,10 +62,16 @@ auto WebView::attach_to(sourcemeta::native::Window &window) -> void {
 }
 
 auto WebView::load_url(const std::string &url) -> void {
+  if (url.empty()) {
+    return;
+  }
   internal_->load_url(url);
 }
 
 auto WebView::load_html(const std::string &html_path) -> void {
+  if (html_path.empty() || !html_path.ends_with(".html")) {
+    return;
+  }
   internal_->load_html(html_path);
 }
 } // namespace sourcemeta::native
