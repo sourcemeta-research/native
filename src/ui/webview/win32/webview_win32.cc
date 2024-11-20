@@ -74,6 +74,7 @@ public:
         Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
             [this, callback](HRESULT result,
                              ICoreWebView2Environment *env) -> HRESULT {
+              assert(result == S_OK);
               env->CreateCoreWebView2Controller(
                   *this->parent_,
                   Callback<
@@ -81,6 +82,8 @@ public:
                       [this, callback](
                           HRESULT result,
                           ICoreWebView2Controller *controller) -> HRESULT {
+                        assert(result == S_OK);
+
                         this->controller = controller;
                         this->controller->get_CoreWebView2(&this->webview);
 
