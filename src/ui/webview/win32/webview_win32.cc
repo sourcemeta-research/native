@@ -68,6 +68,27 @@ public:
     this->parent_ = static_cast<HWND *>(parent);
   }
 
+  auto create_controller(ICoreWebView2Environment *env,
+                         std::function<void()> callback) -> void {
+    env->CreateCoreWebView2Controller(
+        *this->parent_,
+        Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+            [this, callback](HRESULT result,
+                             ICoreWebView2Controller *controller) -> HRESULT {
+              assert(result == S_OK);
+
+              this->controller = controller;
+              this->controller->get_CoreWebView2(&this->webview);
+
+              // Set internals to ready
+              this->ready = true;
+
+              callback();
+              return S_OK;
+            })
+            .Get());
+  }
+
   auto create_webview(std::function<void()> callback) -> void {
     CreateCoreWebView2EnvironmentWithOptions(
         nullptr, nullptr, nullptr,
@@ -75,25 +96,9 @@ public:
             [this, callback](HRESULT result,
                              ICoreWebView2Environment *env) -> HRESULT {
               assert(result == S_OK);
-              env->CreateCoreWebView2Controller(
-                  *this->parent_,
-                  Callback<
-                      ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
-                      [this, callback](
-                          HRESULT result,
-                          ICoreWebView2Controller *controller) -> HRESULT {
-                        assert(result == S_OK);
 
-                        this->controller = controller;
-                        this->controller->get_CoreWebView2(&this->webview);
+              this->create_controller(env, callback);
 
-                        // Set internals to ready
-                        this->ready = true;
-
-                        callback();
-                        return S_OK;
-                      })
-                      .Get());
               return S_OK;
             })
             .Get());
