@@ -1,5 +1,6 @@
-#include <Windows.h>
 #include <sourcemeta/native/window.h>
+
+#include <Windows.h>
 
 #include <functional>
 #include <iostream>
