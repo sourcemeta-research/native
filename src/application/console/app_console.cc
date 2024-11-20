@@ -2,11 +2,23 @@
 
 #include <cassert>
 
+namespace {
+sourcemeta::native::Application *instance_{nullptr};
+}
+
 namespace sourcemeta::native {
 
-Application::Application() {}
+Application::Application() {
+  assert(!instance_);
+  instance_ = this;
+}
 
-Application::~Application() {}
+Application::~Application() { instance_ = nullptr; }
+
+Application &Application::instance() {
+  assert(instance_);
+  return *instance_;
+}
 
 auto Application::run() noexcept -> int {
   assert(!running_);
