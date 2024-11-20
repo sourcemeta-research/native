@@ -5,6 +5,7 @@
 #import <AppKit/AppKit.h>
 #import <Cocoa/Cocoa.h>
 
+#include <functional>
 #include <iostream>
 
 namespace {
