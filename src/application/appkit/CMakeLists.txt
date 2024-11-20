@@ -5,7 +5,7 @@ noa_library(
   VARIANT appkit
   PRIVATE_HEADERS entry.h
   FOLDER "Native/Application"
-  SOURCES app_appkit.mm delegate.mm delegate.h)
+  SOURCES app_appkit.mm)
 
 noa_library_install(
   NAMESPACE sourcemeta
