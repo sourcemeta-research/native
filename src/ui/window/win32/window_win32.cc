@@ -7,17 +7,28 @@
 
 namespace sourcemeta::native {
 
-struct WindowInternal {
-  HWND hwnd;
-  std::vector<std::function<void(void)>> resize_callbacks;
+class Window::Internal {
+public:
+  Internal() {
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = &Internal::WindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = this->class_name_;
+    RegisterClass(&wc);
 
+    // TODO: Make this configurable
+    this->title_ = "Native Window";
+  }
+
+  // The `CALLBACK` macro is a Windows-specific calling convention that
+  // guarantees that the stack is cleaned up properly.
   static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                                      LPARAM lParam) {
     if (uMsg == WM_NCCREATE) {
       // Windows gives us back our internal pointer that we passed to
       // CreateWindowEx
       auto *cs = reinterpret_cast<CREATESTRUCT *>(lParam);
-      auto internal = static_cast<WindowInternal *>(cs->lpCreateParams);
+      auto internal = static_cast<Internal *>(cs->lpCreateParams);
 
       // We store it with the window so we can get it back later
       SetWindowLongPtr(hwnd, GWLP_USERDATA,
@@ -26,10 +37,10 @@ struct WindowInternal {
 
     switch (uMsg) {
     case WM_SIZE: {
-      auto internal = reinterpret_cast<WindowInternal *>(
-          GetWindowLongPtr(hwnd, GWLP_USERDATA));
+      auto internal =
+          reinterpret_cast<Internal *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
       if (internal) {
-        for (auto &callback : internal->resize_callbacks) {
+        for (auto &callback : internal->get_resize_callbacks()) {
           callback();
         }
       }
@@ -44,62 +55,74 @@ struct WindowInternal {
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
   }
+
+  auto size(const unsigned int width, const unsigned int height) -> void {
+    if (this->hwnd_) {
+      SetWindowPos(static_cast<HWND>(this->hwnd_), NULL, 0,
+                   0, // Ignore position
+                   width, height, SWP_NOMOVE | SWP_NOZORDER);
+    }
+  }
+
+  auto create_window() -> void {
+    // Create the window
+    this->hwnd_ =
+        CreateWindowEx(0, this->class_name_, this->title_, WS_OVERLAPPEDWINDOW,
+                       CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                       CW_USEDEFAULT, NULL, NULL, GetModuleHandle(NULL), this);
+    if (!this->hwnd_) {
+      std::cerr << "Failed to create window. Error: " << GetLastError()
+                << std::endl;
+      return;
+    }
+  }
+
+  auto show() -> void {
+    if (!this->hwnd_) {
+      this->create_window();
+    }
+    if (this->hwnd_) {
+      ShowWindow(this->hwnd_, SW_SHOW);
+    }
+  }
+
+  auto handle() -> void * { return &this->hwnd_; }
+
+  auto add_resize_callback(std::function<void(void)> callback) -> void {
+    this->resize_callbacks_.push_back(callback);
+  }
+
+  auto get_resize_callbacks() -> std::vector<std::function<void(void)>> {
+    return this->resize_callbacks_;
+  }
+
+private:
+  HWND hwnd_;
+  std::vector<std::function<void(void)>> resize_callbacks_;
+  const char *class_name_ = "NativeWin32WindowClass";
+  const char *title_;
 };
 
-Window::Window() : internal_(new WindowInternal{}) {
-  const char CLASS_NAME[] = "NativeWin32WindowClass";
-  WNDCLASS wc = {};
-  wc.lpfnWndProc = WindowInternal::WindowProc;
-  wc.hInstance = GetModuleHandle(NULL);
-  wc.lpszClassName = CLASS_NAME;
-  RegisterClass(&wc);
-}
+Window::Window() { internal_ = new Internal(); }
 
 Window::~Window() {
   if (internal_) {
-    auto internal = static_cast<WindowInternal *>(internal_);
-    std::cout << "Window::~Window(): delete internal" << std::endl;
-    delete internal;
+    delete internal_;
   }
 }
 
 auto Window::size(const unsigned int width, const unsigned int height) -> void {
-  auto internal = static_cast<WindowInternal *>(internal_);
-  if (internal->hwnd) {
-    SetWindowPos(static_cast<HWND>(internal->hwnd), NULL, 0,
-                 0, // Ignore position
-                 width, height, SWP_NOMOVE | SWP_NOZORDER);
-  }
+  internal_->size(width, height);
 }
 
 auto Window::show() -> void {
-  const char CLASS_NAME[] = "NativeWin32WindowClass";
-  auto internal = static_cast<WindowInternal *>(internal_);
-  // TODO(tony): add parameter for title
-  HWND hwnd =
-      CreateWindowEx(0, CLASS_NAME, "Native Window", WS_OVERLAPPEDWINDOW,
-                     CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-                     NULL, // Parent window
-                     NULL, // Menu
-                     GetModuleHandle(NULL), internal);
-
-  if (!hwnd) {
-    std::cerr << "Failed to create window. Error: " << GetLastError()
-              << std::endl;
-    return;
-  }
-
-  internal->hwnd = hwnd;
-  ShowWindow(hwnd, SW_SHOW);
+  internal_->create_window();
+  internal_->show();
 }
 
-auto Window::handle() -> void * {
-  auto internal = static_cast<WindowInternal *>(internal_);
-  return &internal->hwnd;
-}
+auto Window::handle() -> void * { return internal_->handle(); }
 
 auto Window::on_resize(std::function<void(void)> callback) -> void {
-  auto internal = static_cast<WindowInternal *>(internal_);
-  internal->resize_callbacks.push_back(callback);
+  internal_->add_resize_callback(callback);
 }
 } // namespace sourcemeta::native
