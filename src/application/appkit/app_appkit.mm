@@ -96,21 +96,9 @@ auto Application::run() noexcept -> int {
   running_ = true;
 
   internal_->run_application(
-      [this]() {
-        try {
-          on_start();
-        } catch (...) {
-          on_error(std::current_exception());
-        }
-      },
-      [this]() {
-        try {
-          on_ready();
-        } catch (...) {
-          on_error(std::current_exception());
-        }
-      },
-      [this](std::exception_ptr error) { on_error(error); });
+      std::bind(&Application::on_start, this),
+      std::bind(&Application::on_ready, this),
+      std::bind(&Application::on_error, this, std::placeholders::_1));
 
   return EXIT_SUCCESS;
 }
