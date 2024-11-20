@@ -1,4 +1,4 @@
-<p align="center"><img width="300px" src="./logo.png" alt="native framework logo"/></p>
+<p align="center"><img width="300px" src="./assets/logo.png" alt="native framework logo"/></p>
 <h1 align="center">native</h1>
 <h3 align="center">Build your Desktop application with C++</h3>
 
@@ -36,8 +36,11 @@ Native is a C++ framework designed to streamline the development of native appli
 ## Getting Started with Native using CMake
 
 1. Code!
+
+Create these three files at the root of your project.
    
 ```cc
+// main.cc
 #include <sourcemeta/native/application.h>
 #include <sourcemeta/native/webview.h>
 #include <sourcemeta/native/window.h>
@@ -55,8 +58,7 @@ public:
     window.size(1200, 900);
     window.show();
 
-    // webview.load_html("index.html");
-    webview.load_url("https://sourcemeta.com");
+    webview.load_html("index.html");
     window.add(webview);
 
     this->exit();
@@ -70,6 +72,42 @@ private:
 };
 
 NATIVE_RUN(App)
+```
+
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Native Framework</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Welcome to Native</h1>
+  <p>This is a simple example to demonstrate loading HTML with CSS styling.</p>
+</body>
+</html>
+```
+
+```css
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+h1 {
+    color: #333;
+}
+p {
+    color: #666;
+}
 ```
 
 2. Configure!
@@ -105,21 +143,17 @@ native_set_profile(
 ```
 
 
-3. Develop!
+3. Build!
 
 ```shell
-cd build
+cmake -S . -B ./build 
 
-cmake .. --config Debug
-
-cmake --build . --config Debug --target native-app-develop
+cmake --build ./build
 ```
 
-4. Release!
+4. Enjoy!
 
-```shell
-cmake --build . --config Debug --target native-app-package
-```
+The application is available in the `/dist` folder of your current directory.
 
 ## Contributing
 
