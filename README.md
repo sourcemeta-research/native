@@ -155,6 +155,8 @@ cmake --build ./build
 
 The application is available in the `/dist` folder of your current directory.
 
+https://github.com/user-attachments/assets/fba80492-d42d-4f9c-be3b-34ce6c1eabbf
+
 ## Contributing
 
 We welcome contributions to this project! To get started, please follow these steps.
