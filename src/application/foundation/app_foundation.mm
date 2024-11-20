@@ -14,12 +14,7 @@ Application::Application() {
   instance_ = this;
 }
 
-Application::~Application() {
-  if (internal_) {
-    CFBridgingRelease(internal_);
-  }
-  instance_ = nullptr;
-}
+Application::~Application() { instance_ = nullptr; }
 
 Application &Application::instance() {
   assert(instance_);
