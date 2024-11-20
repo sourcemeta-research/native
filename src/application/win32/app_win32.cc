@@ -12,13 +12,41 @@ sourcemeta::native::Application *instance_{nullptr};
 
 namespace sourcemeta::native {
 
+class Application::Internal {
+public:
+  auto setup() -> void {
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+  }
+
+  auto start_loop() -> int {
+    MSG msg = {};
+    BOOL ret = 0;
+    while ((ret = GetMessage(&msg, NULL, 0, 0) != 0)) {
+      if (ret == -1) {
+        // The error is coming from GetMessage().
+        throw std::runtime_error(
+            "Failed to retrieve message from the message queue");
+      }
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+    }
+
+    return static_cast<int>(msg.wParam);
+  }
+
+  auto quit(const int code) -> void { PostQuitMessage(code); }
+};
+
 Application::Application() {
   assert(!instance_);
-  SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
   instance_ = this;
+  internal_->setup();
 }
 
-Application::~Application() { instance_ = nullptr; }
+Application::~Application() {
+  internal_ = new Application::Internal();
+  instance_ = nullptr;
+}
 
 Application &Application::instance() {
   assert(instance_);
@@ -38,19 +66,9 @@ auto Application::run() noexcept -> int {
     this->on_error(std::current_exception());
   }
 
-  MSG msg = {};
-  BOOL ret = 0;
-  while ((ret = GetMessage(&msg, NULL, 0, 0) != 0)) {
-    if (ret == -1) {
-      // The error is coming from GetMessage().
-      throw std::runtime_error(
-          "Failed to retrieve message from the message queue");
-    }
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
-  }
+  int code = internal_->start_loop();
 
-  return static_cast<int>(msg.wParam);
+  return code;
 }
 
 auto Application::on_error(std::exception_ptr error) -> void {
@@ -69,7 +87,7 @@ auto Application::on_error(std::exception_ptr error) -> void {
 
 auto Application::exit(const int code) const noexcept -> void {
   assert(running_);
-  PostQuitMessage(code);
+  internal_->quit(code);
 }
 
 } // namespace sourcemeta::native
