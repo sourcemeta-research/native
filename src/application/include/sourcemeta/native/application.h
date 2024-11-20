@@ -51,9 +51,9 @@ private:
   // Internal types is used to store the platform-specific instance of the
   // application. Each platform will have its own implementation and will
   // store the instance in a different way, managing memory and resources.
-  using Internal = void *;
+  class Internal;
 
-  Internal internal_;
+  Internal *internal_;
 
   bool running_{false};
 

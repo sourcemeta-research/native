@@ -12,17 +12,30 @@ sourcemeta::native::Application *instance_{nullptr};
 }
 
 namespace sourcemeta::native {
+
+class Application::Internal {
+public:
+  Internal() = default;
+  ~Internal() = default;
+
+  auto run_application(std::function<void()> on_start) -> void {
+    NSApplication *application = [NSApplication sharedApplication];
+    AppDelegate *delegate = [[AppDelegate alloc] init];
+    [application setDelegate:delegate];
+    [application run];
+
+    on_start();
+  }
+
+  auto terminate() -> void { [NSApp terminate:nil]; }
+};
+
 Application::Application() {
   assert(!instance_);
   instance_ = this;
 }
 
-Application::~Application() {
-  if (internal_) {
-    CFBridgingRelease(internal_);
-  }
-  instance_ = nullptr;
-}
+Application::~Application() { instance_ = nullptr; }
 
 Application &Application::instance() {
   assert(instance_);
@@ -33,13 +46,14 @@ auto Application::run() noexcept -> int {
   assert(!running_);
   running_ = true;
 
-  on_start();
+  internal_->run_application([this]() {
+    try {
+      on_start();
+    } catch (...) {
+      on_error(std::current_exception());
+    }
+  });
 
-  NSApplication *application = [NSApplication sharedApplication];
-  AppDelegate *delegate = [[AppDelegate alloc] init];
-  internal_ = const_cast<void *>(CFBridgingRetain(delegate));
-  [application setDelegate:delegate];
-  [application run];
   return EXIT_SUCCESS;
 }
 
@@ -61,7 +75,7 @@ auto Application::exit(const int code) const noexcept -> void {
   assert(running_);
 
   if (code == 0) {
-    [NSApp terminate:nil];
+    internal_->terminate();
   }
 
   std::exit(code);
