@@ -155,7 +155,7 @@ cmake --build ./build
 
 The application is available in the `/dist` folder of your current directory.
 
-<video src="./assets/macos_example.mov" controls></video>
+<video src="https://raw.githubusercontent.com/sourcemeta-research/native/add-video-to-readme/assets/macos_example.mp4" controls></video>
 
 ## Contributing
 
