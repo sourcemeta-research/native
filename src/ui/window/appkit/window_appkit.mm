@@ -47,6 +47,7 @@ public:
     NSWindowController *controller = [window_ windowController];
     [controller showWindow:nil];
     [window_ makeKeyAndOrderFront:controller];
+    [window_ center];
   }
 
   auto size(const unsigned int width, const unsigned int height) -> void {
